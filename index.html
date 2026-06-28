@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>Dive Into the Beach / Lifestyle — Mr. Boynton Beach</title>
+    <meta name="description" content="Unleash your inner local with Mr. Boynton Beach, your passport to sun-soaked vibes and coastal charm. Explore our world and start living the beach lifestyle today!">
+    <meta name="keywords" content="Beach / Lifestyle, beach / lifestyle, Boynton Beach, coastal living, Florida beach brand">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Zappy Analytics -->
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  var config = {
+    websiteId: 'f97fd00a-bdf0-452a-bf32-73cf67327027',
+    apiUrl: 'https://qaapi.zappy5.com/api/analytics/track',
+    sessionDuration: 30 * 60 * 1000, // 30 minutes
+    visitorDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
+    trackPageViews: true,
+    trackClicks: true,
+    trackFormSubmissions: true
+  };
+  
+  // Generate or retrieve persistent visitor ID (30 days)
+  function getVisitorId() {
+    var visitorKey = 'zappy_visitor_' + config.websiteId;
+    var visitor = null;
+    
+    try {
+      visitor = localStorage.getItem(visitorKey);
+      if (visitor) {
+        var visitorData = JSON.parse(visitor);
+        var now = Date.now();
+        
+        // Check if visitor ID is still valid (30 days)
+        if (now - visitorData.created < config.visitorDuration) {
+          // Update last seen timestamp
+          visitorData.lastSeen = now;
+          localStorage.setItem(visitorKey, JSON.stringify(visitorData));
+          return visitorData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: LocalStorage not available');
+    }
+    
+    // Generate new visitor ID
+    var newVisitorId = 'zv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      localStorage.setItem(visitorKey, JSON.stringify({
+        id: newVisitorId,
+        created: Date.now(),
+        lastSeen: Date.now()
+      }));
+    } catch (e) {
+      // Continue without local storage
+    }
+    
+    return newVisitorId;
+  }
+  
+  // Generate or retrieve session ID (30 minutes)
+  function getSessionId() {
+    var sessionKey = 'zappy_session_' + config.websiteId;
+    var session = null;
+    
+    try {
+      session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        var sessionData = JSON.parse(session);
+        var now = Date.now();
+        
+        // Check if session is still valid
+        if (now - sessionData.timestamp < config.sessionDuration) {
+          // Update timestamp
+          sessionData.timestamp = now;
+          sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+          return sessionData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: SessionStorage not available');
+    }
+    
+    // Generate new session ID
+    var newSessionId = 'zs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        id: newSessionId,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Continue without session storage
+    }
+    
+    return newSessionId;
+  }
+  
+  var visitorId = getVisitorId();
+  var sessionId = getSessionId();
+  
+  // Site Optimization Agent — visual heatmap helpers
+  function getBandAnchor(el) {
+    var node = el;
+    while (node && node !== document.body) {
+      if (node.getAttribute && node.getAttribute('data-band-index') != null) {
+        return { bandIndex: node.getAttribute('data-band-index'), sectionId: node.id || null };
+      }
+      node = node.parentElement;
+    }
+    node = el;
+    while (node && node !== document.body) {
+      if (node.tagName === 'SECTION' && node.id) {
+        return { bandIndex: null, sectionId: node.id };
+      }
+      node = node.parentElement;
+    }
+    return { bandIndex: null, sectionId: null };
+  }
+  function heatmapFields(el, e) {
+    var anchor = getBandAnchor(el);
+    return {
+      x: Math.round((e && e.pageX) || 0),
+      y: Math.round((e && e.pageY) || 0),
+      bandIndex: anchor.bandIndex,
+      sectionId: anchor.sectionId
+    };
+  }
+  function mergeFields(base, extra) {
+    for (var k in extra) { if (Object.prototype.hasOwnProperty.call(extra, k)) base[k] = extra[k]; }
+    return base;
+  }
+  // Track an event
+  function trackEvent(eventType, data) {
+    data = data || {};
+    
+    var eventData = {
+      website_id: config.websiteId,
+      event_type: eventType,
+      page_path: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      visitor_id: visitorId,
+      session_id: sessionId,
+      metadata: data
+    };
+    
+    // Use sendBeacon if available (better for page unload events)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([JSON.stringify(eventData)], { type: 'application/json' });
+      navigator.sendBeacon(config.apiUrl, blob);
+    } else {
+      // Fallback to fetch
+      fetch(config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData),
+        keepalive: true
+      }).catch(function(error) {
+        console.warn('Zappy Analytics: Failed to track event', error);
+      });
+    }
+  }
+  
+  // Track page view
+  if (config.trackPageViews) {
+    trackEvent('pageview', {
+      title: document.title,
+      url: window.location.href
+    });
+  }
+  
+  // Track clicks on important elements
+  if (config.trackClicks) {
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      
+      // Track button clicks (counted as actions)
+      if (target.tagName === 'BUTTON' || target.closest('button')) {
+        var button = target.tagName === 'BUTTON' ? target : target.closest('button');
+        var clickMeta = {
+          element: 'button',
+          text: button.textContent.trim().substring(0, 100),
+          id: button.id || null,
+          class: button.className || null
+        };
+        mergeFields(clickMeta, heatmapFields(button, e));
+        trackEvent('click', clickMeta);
+      }
+      
+      // Track link clicks (navigation - not counted as actions)
+      else if (target.tagName === 'A' || target.closest('a')) {
+        var link = target.tagName === 'A' ? target : target.closest('a');
+        var navMeta = {
+          element: 'link',
+          text: link.textContent.trim().substring(0, 100),
+          href: link.href,
+          external: link.hostname !== window.location.hostname
+        };
+        mergeFields(navMeta, heatmapFields(link, e));
+        trackEvent('navigation', navMeta);
+      }
+    }, true);
+  }
+  
+  // Track scroll depth milestones (visual heatmap reach signal)
+  (function() {
+    var milestones = [25, 50, 75, 100];
+    var fired = {};
+    var maxDepth = 0;
+    function computeDepth() {
+      var doc = document.documentElement;
+      var scrollable = (doc.scrollHeight - window.innerHeight);
+      if (scrollable <= 0) return 100;
+      return Math.min(100, Math.round(((window.scrollY || window.pageYOffset || 0) / scrollable) * 100));
+    }
+    var ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(function() {
+        var depth = computeDepth();
+        if (depth > maxDepth) maxDepth = depth;
+        for (var i = 0; i < milestones.length; i++) {
+          var m = milestones[i];
+          if (depth >= m && !fired[m]) {
+            fired[m] = true;
+            trackEvent('scroll_depth', { milestone: m, maxDepthPct: maxDepth });
+          }
+        }
+        ticking = false;
+      });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+  
+  // Track form submissions
+  if (config.trackFormSubmissions) {
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      
+      trackEvent('form_submit', {
+        form_id: form.id || null,
+        form_name: form.name || null,
+        form_action: form.action || null,
+        form_method: form.method || 'GET'
+      });
+    }, true);
+  }
+  
+  // Track time on page (send on page unload)
+  var pageLoadTime = Date.now();
+  
+  window.addEventListener('beforeunload', function() {
+    var timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000); // in seconds
+    
+    trackEvent('page_unload', {
+      time_on_page: timeOnPage,
+      page_path: window.location.pathname
+    });
+  });
+  
+  // Expose tracking function globally for custom events
+  window.zappyAnalytics = {
+    track: trackEvent,
+    getVisitorId: function() { return visitorId; },
+    getSessionId: function() { return sessionId; }
+  };
+  
+})();
+</script>
+<!-- End Zappy Analytics -->
+    <meta property="og:title" content="Dive Into the Beach / Lifestyle — Mr. Boynton Beach">
+    <meta property="og:description" content="Unleash your inner local with Mr. Boynton Beach, your passport to sun-soaked vibes and coastal charm. Explore our world and start living the beach lifestyle today!">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Dive Into the Beach / Lifestyle — Mr. Boynton Beach">
+    <meta name="twitter:description" content="Unleash your inner local with Mr. Boynton Beach, your passport to sun-soaked vibes and coastal charm. Explore our world and start living the beach lifestyle today!">
+    <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .skip-link { position: absolute; top: 0; left: 0; transform: translateY(-200%); padding: 12px 18px; background: var(--bg-dark, #1a1a1a); color: var(--text-light, #fff); font-weight: 600; border-radius: 0 0 8px 0; z-index: 10000; }
+    .skip-link:focus { transform: none; outline: 2px solid var(--ring, #fff); outline-offset: 2px; }
+    :focus-visible { outline: 2px solid var(--ring, currentColor); outline-offset: 3px; }
+  </style>
+
+
+  
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css">
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
+    <!-- Mickidum Accessibility Toolbar -->
+    <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+    <script>window.ZAPPY_WEBSITE_ID = "f97fd00a-bdf0-452a-bf32-73cf67327027"; window.ZAPPY_API_BASE = "https://qaapi.zappy5.com";</script>
+
+    <style id="zappy-dropdown-submenu-styles">
+      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
+      /* Base styles for dropdown submenus - parent must be positioned */
+      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
+      /* Submenu base - hidden by default */
+      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
+      /* CRITICAL: Desktop hover styles to show dropdown */
+      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Submenu item styling */
+      .sub-menu li { list-style: none; margin: 0; padding: 0; }
+      .sub-menu a { display: block !important; padding: 10px 16px !important; color: var(--text-dark, #333) !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
+      .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+      [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 10px !important; padding-right: 28px !important; }
+      .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+      .sub-menu a:hover { background-color: #f5f5f5; }
+      /* RTL (Hebrew/Arabic) dropdown positioning */
+      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
+      /* Hide empty dropdown menus (exclude catalog sub-menus that use <a> children instead of <li>) */
+      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))):not(:has(> a)), .sub-menu:not(:has(li)):not(:has(> a)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      /* Desktop: show submenu on Menu Group hover */
+      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Menu Group title styling */
+      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
+      
+      /* ========== MOBILE SUBMENU STYLES ========== */
+      @media (max-width: 768px) {
+        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
+        .navbar .sub-menu.mobile-expanded, .nav-menu .sub-menu.mobile-expanded, #navMenu .sub-menu.mobile-expanded { max-height: none !important; overflow-y: visible !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
+        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
+        /* Disable hover behavior on mobile */
+        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
+        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; position: relative !important; min-height: 44px !important; }
+        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; min-width: 0 !important; }
+        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; min-width: 0 !important; padding: 0 !important; line-height: inherit !important; }
+        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu, .navbar li:has(.sub-menu) > .sub-menu, #navMenu li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
+        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
+        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: auto !important; background: transparent !important; border: none !important; cursor: pointer !important; color: var(--text-light) !important; position: static !important; flex-shrink: 0 !important; align-self: stretch !important; z-index: 2 !important; padding: 0 !important; margin: 0 !important; }
+        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
+        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
+        .sub-menu a { padding: 10px 0 !important; display: block !important; color: var(--text-light) !important; white-space: normal !important; }
+        .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+        [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 0 !important; padding-right: 28px !important; }
+        .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+        .nav-menu.active, #navMenu.active { max-width: 100vw !important; overflow-x: hidden !important; box-sizing: border-box !important; }
+        .navbar .sub-menu li a, nav.navbar .sub-menu li a, .zappy-products-dropdown .sub-menu a { color: var(--text-light) !important; }
+      }
+      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
+    </style>
+
+    <style id="zappy-widget-visibility">
+      html[dir="rtl"] .whatsapp-float { right: 20px !important; left: auto !important; }
+      html[dir="ltr"] .whatsapp-float, html:not([dir]) .whatsapp-float { left: 20px !important; right: auto !important; }
+      html[dir="rtl"] #mic-access-tool-general-button, html[dir="rtl"] .mic-access-tool-general-button,
+      html[dir="rtl"] #mic-init-access-tool .mic-access-tool-general-button,
+      html[dir="rtl"] #mic-init-access-tool #mic-access-tool-general-button,
+      html[dir="rtl"] ._access-icon { left: 20px !important; right: auto !important; }
+      html[dir="ltr"] #mic-access-tool-general-button, html[dir="ltr"] .mic-access-tool-general-button,
+      html[dir="ltr"] #mic-init-access-tool .mic-access-tool-general-button,
+      html[dir="ltr"] #mic-init-access-tool #mic-access-tool-general-button,
+      html[dir="ltr"] ._access-icon,
+      html:not([dir]) #mic-access-tool-general-button, html:not([dir]) .mic-access-tool-general-button,
+      html:not([dir]) #mic-init-access-tool .mic-access-tool-general-button,
+      html:not([dir]) #mic-init-access-tool #mic-access-tool-general-button,
+      html:not([dir]) ._access-icon { right: 20px !important; left: auto !important; }
+      @media (max-width: 768px) { .whatsapp-float { display: flex !important; } }
+      @media (min-width: 769px) { .whatsapp-float { display: flex !important; } }
+      @media (max-width: 768px) {
+        #mic-access-tool-general-button, .mic-access-tool-general-button,
+        #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+        ._access-icon { display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }
+        #mic-access-tool-box.opened-mic-access-tool, .mic-access-tool-box.opened-mic-access-tool,
+        #mic-init-access-tool #mic-access-tool-box.opened-mic-access-tool {
+          visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+        }
+      }
+      @media (min-width: 769px) {
+        #mic-access-tool-general-button, .mic-access-tool-general-button,
+        #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+        ._access-icon { display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }
+        #mic-access-tool-box.opened-mic-access-tool, .mic-access-tool-box.opened-mic-access-tool,
+        #mic-init-access-tool #mic-access-tool-box.opened-mic-access-tool {
+          visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+        }
+      }
+    </style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+  <nav class="navbar">
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+  <button class="phone-header-btn" data-phone="15614458719" aria-label="Call">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </button>
+  <div class="nav-container">
+    <div class="nav-brand">
+      <a href="/" class="logo-link"><img class="logo" src="/assets/mr-boynton-beach-beach-lifestyle-logo-1780952120124-4y1292.webp?v=1780952120619-1ahekh" alt="Mr. Boynton Beach"></a>
+    </div>
+    <ul class="nav-menu" id="navMenu"><li><a href="/">Home</a></li><li><a href="/experiences">Experiences</a></li><li><a href="/about">About</a></li></ul>
+    <div class="nav-cta-container">
+      <a href="/contact" class="nav-cta-btn">Contact</a>
+    </div>
+  </div>
+</nav>
+<script>
+
+// Navbar Mobile Menu Toggle and Contrast Fix
+(function() {
+  // Use 'load' event instead of 'DOMContentLoaded' to ensure we run AFTER all other scripts
+  window.addEventListener('load', function() {
+    
+    // FIX MOBILE BUTTON CONTRAST
+    // Detect navbar background color and apply contrasting color to mobile buttons
+    const navbar = document.querySelector('.navbar, nav, header');
+    if (!navbar) {
+      console.log('[Navbar] Navbar element not found');
+      return;
+    }
+    
+    // DECLARE VARIABLES EARLY to avoid Temporal Dead Zone errors
+    // These are used in multiple places below
+    let mobileToggle = document.getElementById('mobileToggle') ||
+                       document.querySelector('.mobile-toggle') ||
+                       document.querySelector('.hamburger') ||
+                       document.querySelector('.hamburger-menu') ||
+                       document.querySelector('.menu-toggle') ||
+                       document.querySelector('.burger-menu') ||
+                       document.querySelector('[aria-label="Menu"]') ||
+                       document.querySelector('[aria-label="תפריט"]');
+    
+    const phoneBtn = document.querySelector('.phone-header-btn');
+    
+    const computedStyle = window.getComputedStyle(navbar);
+    let bgColor = computedStyle.backgroundColor;
+    
+    console.log('[Navbar] Initial navbar background:', bgColor);
+    
+    // Check if background is transparent or rgba with 0 alpha
+    const isTransparent = bgColor === 'transparent' || 
+                         bgColor === 'rgba(0, 0, 0, 0)' ||
+                         (bgColor.startsWith('rgba') && bgColor.includes(', 0)'));
+    
+    if (isTransparent) {
+      // Check for background-image or gradient
+      const bgImage = computedStyle.backgroundImage;
+      if (bgImage && bgImage !== 'none') {
+        console.log('[Navbar] Navbar has background image/gradient, using dark text');
+        bgColor = 'rgb(240, 240, 240)'; // Assume light background
+      } else {
+        // Transparent navbar - check body background
+        const bodyBg = window.getComputedStyle(document.body).backgroundColor;
+        console.log('[Navbar] Navbar transparent, using body background:', bodyBg);
+        bgColor = bodyBg;
+      }
+    }
+    
+    // Calculate luminance to determine if background is light or dark
+    const rgb = bgColor.match(/\d+/g);
+    if (rgb && rgb.length >= 3) {
+      const r = parseInt(rgb[0]);
+      const g = parseInt(rgb[1]);
+      const b = parseInt(rgb[2]);
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      
+      // Mobile button colors are set by Claude's AI-generated CSS (same as .nav-menu a)
+      // No dynamic color overrides needed - colors come from the generated navbar CSS
+      console.log('[Navbar] Mobile button colors preserved from Claude CSS (luminance:', luminance.toFixed(2) + ')');
+      
+      // FIX ICON SIZES - Ensure SVGs are properly sized and visible
+      // INJECT CRITICAL CSS TO OVERRIDE ANY CONFLICTING RULES
+      const criticalCSS = document.createElement('style');
+      criticalCSS.id = 'zappy-mobile-nav-fix';
+      const htmlLang = document.documentElement.lang || 'en';
+      const htmlDir = document.documentElement.dir || 'ltr';
+      // Check both dir attribute AND lang for RTL detection
+      // dir="rtl" is the most reliable indicator
+      const isRTL = htmlDir === 'rtl' || htmlLang === 'he' || htmlLang === 'ar';
+      
+      criticalCSS.textContent = `
+        /* Hide mobile buttons on desktop, show only on mobile */
+        @media (min-width: 769px) {
+          .mobile-toggle,
+          .phone-header-btn {
+            display: none !important;
+          }
+        }
+        
+        /* Show and position mobile buttons correctly on mobile */
+        @media (max-width: 768px) {
+          .navbar,
+          nav.navbar {
+            min-height: 70px !important;
+          }
+
+          .mobile-toggle,
+          .phone-header-btn {
+            position: absolute !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            margin-top: auto !important;
+            margin-bottom: auto !important;
+            transform: none !important;
+            z-index: 1001 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            border: none !important;
+            cursor: pointer !important;
+            padding: 6px !important;
+            background: none !important;
+            color: var(--nav-text, var(--text-light)) !important;
+            touch-action: manipulation !important;
+            -webkit-tap-highlight-color: transparent !important;
+          }
+
+          html[data-zappy-site-type="ecommerce"] .phone-header-btn,
+          body[data-zappy-site-type="ecommerce"] .phone-header-btn,
+          html[data-zappy-site-type="ecommerce"] header .phone-header-btn,
+          html[data-zappy-site-type="ecommerce"] nav .phone-header-btn {
+            display: none !important;
+            visibility: hidden !important;
+            width: 0 !important;
+            height: 0 !important;
+            min-width: 0 !important;
+            overflow: hidden !important;
+          }
+          
+          /* LTR positioning (default): hamburger LEFT, phone RIGHT */
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .mobile-toggle,
+          html[dir="ltr"] .mobile-toggle {
+            left: 12px !important;
+            right: auto !important;
+          }
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .phone-header-btn,
+          html[dir="ltr"] .phone-header-btn {
+            right: 12px !important;
+            left: auto !important;
+          }
+          
+          /* RTL positioning: hamburger RIGHT, phone LEFT */
+          html[dir="rtl"] .mobile-toggle,
+          html[lang="he"] .mobile-toggle,
+          html[lang="ar"] .mobile-toggle {
+            right: 12px !important;
+            left: auto !important;
+          }
+          html[dir="rtl"] .phone-header-btn,
+          html[lang="he"] .phone-header-btn,
+          html[lang="ar"] .phone-header-btn {
+            left: 12px !important;
+            right: auto !important;
+          }
+          
+          /* CRITICAL: Ensure nav-container has min-height on mobile */
+          /* All children are positioned absolutely/fixed on mobile, so height:auto collapses to 0 */
+          .nav-container {
+            min-height: 70px !important;
+            position: relative !important;
+          }
+          
+          /* Ensure SVG icons are properly sized and inherit color */
+          .mobile-toggle svg,
+          .phone-header-btn svg {
+            width: 24px !important;
+            height: 24px !important;
+            /* Don't force display - let JavaScript control hamburger/close toggle */
+          }
+          
+          /* Reset nav-cta-container on mobile - remove desktop box-shadow/padding */
+          /* that creates a visible ghost box when CTA button is hidden */
+          .nav-cta-container {
+            box-shadow: none !important;
+            padding: 0 !important;
+          }
+          
+          /* Hide nav-cta-container entirely on mobile when there's no lang-switcher */
+          /* (only the CTA button is inside, and it's hidden on mobile) */
+          .nav-cta-container:not(:has(.lang-switcher)) {
+            display: none !important;
+          }
+          
+          /* CRITICAL: Prevent hero image fade gradient from bleeding over headline text */
+          /* The .image-fade-gradient has bottom: -30px (extends below parent) */
+          /* On mobile stacked layout, this overlaps the h1 text below the image */
+          .hero-image-column {
+            overflow: hidden !important;
+          }
+          .image-fade-gradient {
+            bottom: 0 !important;
+          }
+          
+          /* Hide desktop language switcher on mobile - hamburger menu handles it */
+          /* High specificity to override stored CSS */
+          .lang-switcher,
+          .nav-cta-container .lang-switcher,
+          .nav-container .lang-switcher,
+          .navbar .lang-switcher,
+          .navbar .nav-cta-container .lang-switcher {
+            display: none !important;
+          }
+        }
+      `;
+      
+      // Remove existing fix if present and inject new one
+      const existing = document.getElementById('zappy-mobile-nav-fix');
+      if (existing) existing.remove();
+      document.head.appendChild(criticalCSS);
+      
+      console.log('[Navbar] Critical CSS injected for mobile nav positioning');
+      
+      // ONLY apply inline positioning styles on mobile viewport
+      // On desktop, the CSS handles hiding these buttons with display: none
+      // Inline styles were breaking desktop layout by overriding CSS
+      const isMobileViewport = window.innerWidth <= 768;
+      
+      if (mobileToggle) {
+        // Icon sizing applies to all viewports for consistency
+        const hamburgerIcon = mobileToggle.querySelector('.hamburger-icon');
+        const closeIcon = mobileToggle.querySelector('.close-icon');
+        
+        if (hamburgerIcon) {
+          hamburgerIcon.style.setProperty('width', '24px', 'important');
+          hamburgerIcon.style.setProperty('height', '24px', 'important');
+          hamburgerIcon.style.setProperty('display', 'block', 'important'); // Show hamburger by default
+        }
+        if (closeIcon) {
+          closeIcon.style.setProperty('width', '24px', 'important');
+          closeIcon.style.setProperty('height', '24px', 'important');
+          closeIcon.style.setProperty('display', 'none', 'important'); // Hide close icon by default
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          mobileToggle.style.setProperty('position', 'absolute', 'important');
+          mobileToggle.style.setProperty('top', '0', 'important');
+          mobileToggle.style.setProperty('bottom', '0', 'important');
+          mobileToggle.style.setProperty('margin-top', 'auto', 'important');
+          mobileToggle.style.setProperty('margin-bottom', 'auto', 'important');
+          mobileToggle.style.setProperty('transform', 'none', 'important');
+          mobileToggle.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          
+          console.log('[Navbar] Mobile toggle positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          mobileToggle.style.removeProperty('position');
+          mobileToggle.style.removeProperty('top');
+          mobileToggle.style.removeProperty('transform');
+          mobileToggle.style.removeProperty('z-index');
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared mobile toggle inline positioning');
+        }
+      }
+      
+      if (phoneBtn) {
+        // Icon sizing applies to all viewports
+        const phoneIcon = phoneBtn.querySelector('svg');
+        if (phoneIcon) {
+          phoneIcon.style.width = '24px';
+          phoneIcon.style.height = '24px';
+          phoneIcon.setAttribute('width', '24');
+          phoneIcon.setAttribute('height', '24');
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          phoneBtn.style.setProperty('position', 'absolute', 'important');
+          phoneBtn.style.setProperty('top', '0', 'important');
+          phoneBtn.style.setProperty('bottom', '0', 'important');
+          phoneBtn.style.setProperty('margin-top', 'auto', 'important');
+          phoneBtn.style.setProperty('margin-bottom', 'auto', 'important');
+          phoneBtn.style.setProperty('transform', 'none', 'important');
+          phoneBtn.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          
+          console.log('[Navbar] Phone button positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          phoneBtn.style.removeProperty('position');
+          phoneBtn.style.removeProperty('top');
+          phoneBtn.style.removeProperty('transform');
+          phoneBtn.style.removeProperty('z-index');
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared phone button inline positioning');
+        }
+      }
+    } else {
+      console.log('[Navbar] Could not parse background color:', bgColor);
+    }
+    
+    // MOBILE MENU TOGGLE
+    // Re-query in case DOM changed (mobileToggle already declared at top of function)
+    mobileToggle = document.getElementById('mobileToggle') ||
+                   document.querySelector('.mobile-toggle') ||
+                   document.querySelector('.hamburger') ||
+                   document.querySelector('.hamburger-menu') ||
+                   document.querySelector('.menu-toggle') ||
+                   document.querySelector('.burger-menu') ||
+                   document.querySelector('[aria-label="Menu"]') ||
+                   document.querySelector('[aria-label="תפריט"]');
+    
+    // EXPANDED SEARCH: Find nav menu by ID or class
+    const navMenu = document.getElementById('navMenu') ||
+                  document.querySelector('.nav-menu') ||
+                  document.querySelector('.nav-links') ||
+                  document.querySelector('nav ul:not(.submenu)');
+    
+    if (!mobileToggle || !navMenu) {
+      console.log('[Navbar] Mobile toggle or menu not found:', { toggle: !!mobileToggle, menu: !!navMenu });
+      return;
+    }
+    
+    // Ensure navMenu has ID for CSS targeting
+    if (!navMenu.id) {
+      navMenu.id = 'navMenu';
+    }
+    
+    console.log('[Navbar] Initializing mobile menu...');
+    
+    // Remove any existing event listeners by cloning the button
+    const newToggle = mobileToggle.cloneNode(true);
+    mobileToggle.parentNode.replaceChild(newToggle, mobileToggle);
+    
+    // Toggle menu handler (shared by click and touchend)
+    function handleToggle(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const hamburgerIcon = newToggle.querySelector('.hamburger-icon');
+      const closeIcon = newToggle.querySelector('.close-icon');
+      const isActive = navMenu.classList.contains('active');
+      
+      if (isActive) {
+        // Close menu
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed');
+      } else {
+        // Open menu
+        navMenu.classList.add('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'none', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'block', 'important');
+        document.body.style.overflow = 'hidden';
+        console.log('[Navbar] Menu opened');
+      }
+    }
+    
+    // Use click for desktop/emulation and touchend as iOS Safari fallback.
+    // Prevent double-fire with a timestamp guard.
+    var lastToggleTime = 0;
+    function guardedToggle(e) {
+      var now = Date.now();
+      if (now - lastToggleTime < 300) return;
+      lastToggleTime = now;
+      handleToggle(e);
+    }
+    
+    newToggle.addEventListener('click', guardedToggle);
+    newToggle.addEventListener('touchend', guardedToggle);
+    
+    // Close menu when clicking nav links (but NOT dropdown toggles)
+    const navLinks = navMenu.querySelectorAll('a');
+    navLinks.forEach(function(link) {
+      link.addEventListener('click', function() {
+        // Don't close if it's a dropdown child (unless it's a real navigation link)
+        if (this.getAttribute('href') === '#') return;
+        
+        const hamburgerIcon = newToggle.querySelector('.hamburger-icon');
+        const closeIcon = newToggle.querySelector('.close-icon');
+        
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed (link clicked)');
+      });
+    });
+    
+    // DROPDOWN MENU TOGGLE (for mobile and touch devices)
+    var dropdownToggles = navMenu.querySelectorAll('.dropdown-toggle');
+    dropdownToggles.forEach(function(toggle) {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var parent = this.closest('.nav-dropdown');
+        if (!parent) return;
+        
+        // Close other open dropdowns at the same level
+        var siblings = parent.parentNode.querySelectorAll('.nav-dropdown.open');
+        siblings.forEach(function(sib) {
+          if (sib !== parent) sib.classList.remove('open');
+        });
+        
+        parent.classList.toggle('open');
+        console.log('[Navbar] Dropdown toggled:', parent.classList.contains('open') ? 'open' : 'closed');
+      });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.nav-dropdown')) {
+        var openDropdowns = document.querySelectorAll('.nav-dropdown.open');
+        openDropdowns.forEach(function(dd) { dd.classList.remove('open'); });
+      }
+    });
+    
+    console.log('[Navbar] Dropdown handlers initialized for ' + dropdownToggles.length + ' dropdowns');
+    
+    // Phone button functionality (phoneBtn already declared at top of function)
+    if (phoneBtn) {
+      phoneBtn.addEventListener('click', function() {
+        // Get phone number from placeholder in page or use default
+        const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
+        const phoneNumber = phoneLinks.length > 0 
+          ? phoneLinks[0].getAttribute('href').replace('tel:', '')
+          : '15614458719';
+        
+        window.location.href = 'tel:' + phoneNumber;
+        console.log('[Navbar] Phone button clicked');
+      });
+    }
+    
+    console.log('[Navbar] Mobile menu initialized successfully');
+    
+    // WhatsApp button visibility is now controlled via CSS (siteSettings).
+    // No JS-based desktop hiding — the button is visible on both mobile and desktop by default.
+  });
+})();
+
+</script>
+  
+  <main id="main">
+    <section data-band-index="0" class="home-hero-section" data-layout-spec="Home-hero" data-hero-type="fullscreen-scrim" id="home-hero-section" style="position: relative; overflow: hidden; min-height: 917.232px !important;" data-zappy-content-align="lower-center">
+<div class="hero-video-background zappy-editable-video-bg" id="hero-video-bg-1782311765985" data-original-image-src="/assets/site-home-hero-image-1-1780955815240-66uqnn.webp?v=1780955817602" style="outline: rgb(255, 0, 131) solid 3px; outline-offset: -3px;">
+  <div class="hero-video-overlay" style="transition: background 0.3s; background: linear-gradient(rgba(255, 0, 131, 0.2), rgba(255, 0, 131, 0.3));"></div>
+  <iframe class="hero-video-iframe" src="https://www.youtube.com/embed/i6_5mRdlJbQ?autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=i6_5mRdlJbQ&amp;controls=0&amp;showinfo=0&amp;modestbranding=1&amp;rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" loading="lazy"></iframe>
+  <div data-zappy-zoom-wrapper="true" data-element-id="img-1782311765978-95tx3oxhw" data-element-type="image" data-zappy-zoom-wrapper-width="1080px" data-zappy-zoom-wrapper-height="1070px" data-zappy-zoom-wrapper-width-mode="full" data-zappy-zoom-wrapper-align="center" style="position: absolute !important; overflow: hidden !important; width: 100% !important; max-width: none !important; margin-left: 0px !important; margin-right: 0px !important; height: 100% !important; display: block !important; top: 0px !important; left: 0px !important; z-index: 1 !important;" data-zappy-zoom-clip="true" data-zappy-wrapper-margins-applied="true"><img class="hero-video-fallback" src="/assets/site-home-hero-image-1-1780955815240-66uqnn.webp?v=1780955817602" alt="Hero background" loading="lazy" data-element-type="image" data-element-id="img-1782311765978-95tx3oxhw" style="object-fit: cover !important; object-position: 50% 35% !important; width: 100% !important; max-width: none !important; max-height: none !important; height: 100% !important; margin: 0px !important; position: absolute !important; left: 0% !important; top: 0% !important; display: block !important;" data-zappy-zoom="1" data-zappy-object-position="50% 35%"></div>
+</div>
+  <!-- Background Image Layer -->
+  <div class="home-hero-section__bg-wrapper">
+    <div data-zappy-zoom-wrapper="true" data-element-id="img-1780949867097-x5ikxu5ib" data-element-type="image" data-zappy-zoom-wrapper-width-mode="full" style="top: 0px !important; left: 0px !important; width: 100% !important; height: 100% !important; position: absolute !important; max-width: none !important; margin-left: 0px !important; margin-right: 0px !important; z-index: 1 !important; overflow: hidden !important;" data-zappy-zoom-clip="true" data-zappy-wrapper-margins-applied="true" data-zappy-zoom-wrapper-width="1477px" data-zappy-zoom-wrapper-height="734px" data-zappy-zoom-wrapper-align="center"><img fetchpriority="high" data-hero-bg="true" data-placeholder="home-hero-image-1" data-context="Luminous coastal sunset over Boynton Beach Florida with soft golden light reflecting on gentle waves, wide shoreline, and pastel sky with scattered palm silhouettes, cinematic luxury beach photography" width="1200" height="600" src="/assets/site-home-hero-image-1-1780955815240-66uqnn.webp?v=1780955817602" alt="Scenic Boynton Beach sunset with golden light and calm ocean waves" class="home-hero-section__bg-image hero-original-image-hidden" data-hero-background="true" data-element-type="image" data-element-id="img-1780949867097-x5ikxu5ib" style="object-position: 50% 33% !important; width: 100% !important; height: 100% !important; object-fit: cover !important; position: absolute !important; margin: 0px !important; left: 0% !important; top: 0% !important; max-width: none !important; max-height: none !important; display: block !important;" data-zappy-zoom="1" data-zappy-original-width="1476.800048828125" data-zappy-original-height="733.6000366210938" data-zappy-object-position="50% 33%"></div>
+  </div>
+
+  <!-- Scrim Overlay for Text Readability -->
+  <div class="home-hero-section__scrim" aria-hidden="true"></div>
+
+  <!-- Decorative Palm Motif (behind text, subtle) -->
+  <div class="home-hero-section__palm-accent" aria-hidden="true">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <path d="M100,180 C100,180 40,120 60,70 C80,20 100,30 100,30 C100,30 120,20 140,70 C160,120 100,180 100,180 Z" fill="none" stroke="#C9A84C" stroke-width="2" opacity="0.15"></path>
+      <path d="M100,30 C100,30 130,10 150,40" fill="none" stroke="#C9A84C" stroke-width="2" opacity="0.15"></path>
+      <path d="M100,30 C100,30 70,10 50,40" fill="none" stroke="#C9A84C" stroke-width="2" opacity="0.15"></path>
+    </svg>
+  </div>
+
+  <!-- Text & CTA Overlay Group -->
+  <div class="home-hero-section__content" data-zappy-align-target="true" style=""><h3 class="home-hero-section__identity-line">Your Local Guide &amp; Lifestyle Voice</h3>
+    <h1 class="home-hero-section__headline">Lyn Miller realtor palm Beach county</h1>
+    <p class="home-hero-section__description" style="">Family-friendly coastal moments, eco-aware discovery, and the relaxed energy of South Florida — curated by the personality that knows it best.</p>
+    <div class="home-hero-section__ctas" style="">
+      <a href="#experiences" class="home-hero-section__cta home-hero-section__cta--primary">
+        Explore Experiences
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" data-element-type="icon" data-element-id="icon-1782312218765-t0v0e0dr6" data-icon-type="svg" style="cursor: pointer;"><path d="M3 8H13M10 5L13 8L10 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </a>
+      <a href="#contact" class="home-hero-section__cta home-hero-section__cta--secondary" data-element-id="btn-1781015354901-a909hjny5">
+        Contact Mr Boynton Beach
+      </a>
+    </div>
+    <div class="zappy-inserted-element" data-element-type="video" data-video-editable="true" style="max-width: 600px; margin: 20px auto; display: flex; justify-content: center;" data-element-id="element-saved-1782377579020-r42hbyij5"><div data-element-type="video" data-video-editable="true" style="position: relative; width: 100%; max-width: 800px; height: 0px; padding-bottom: 56.25%; background: rgb(0, 0, 0); border-radius: 8px; overflow: hidden;" data-element-id="video-1782379660580-sb9zfozcg"><iframe src="https://www.youtube.com/embed/i6_5mRdlJbQ" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; " allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" data-zappy-abs-align="true"></iframe></div></div><div class="zappy-inserted-element" id="zappy-element-1782630688529-2gqommnhw" data-element-id="zappy-element-1782630688529-2gqommnhw" data-element-type="video" data-zappy-newly-inserted="true" style="max-width: 1440px; margin: 20px auto; display: flex; justify-content: center;"><div style="width: 100%; max-width: 600px; display: block; margin-left: auto; margin-right: auto;"><div style="position: relative; width: 100%; max-width: 600px; height: 0px; padding-bottom: 56.25%; background: rgba(255, 0, 131, 0.03); border: 3px solid rgb(255, 0, 131); border-radius: 16px; overflow: hidden;" data-element-type="video" data-element-id="zappy-element-1782630688529-2gqommnhw" id="zappy-element-1782630688529-2gqommnhw"><div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;"><svg style="width: 120px; height: 120px; display: block;" viewBox="0 0 270 265" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="266" height="261" rx="40" stroke="#FF0083" stroke-width="4"></rect><g clip-path="url(#clip0_201_1806)"><path d="M102.5 91L112.5 82.5L123.5 81.5L175.5 119L182.5 131.5L178.5 142L125.5 180.5L116 183.5L109 181L102 172L102.5 91Z" fill="#FFE8F4"></path><path d="M177.228 117.668L127.264 81.483C121.838 77.496 114.723 76.929 108.729 79.9665C102.636 83.058 99 88.98 99 95.811V168.194C99 175.029 102.641 180.951 108.734 184.038C111.335 185.357 114.089 186.009 116.82 186.009C120.483 186.009 124.105 184.835 127.251 182.526L177.223 146.337L177.237 146.328C181.849 142.944 184.495 137.724 184.495 132C184.495 126.276 181.849 121.056 177.223 117.668H177.228ZM174.582 142.692L124.605 178.886C120.492 181.91 115.322 182.328 110.772 180.024C106.218 177.716 103.504 173.297 103.504 168.194V95.8065C103.504 90.708 106.223 86.289 110.772 83.976C112.703 82.995 114.736 82.5 116.82 82.5C119.587 82.5 122.283 83.4045 124.618 85.1235L174.587 121.308C178.029 123.833 180.005 127.73 180.005 132C180.005 136.271 178.034 140.163 174.587 142.692H174.582Z" fill="#FF0083"></path></g><defs><clipPath id="clip0_201_1806"><rect width="108" height="108" fill="white" transform="translate(81 78)"></rect></clipPath></defs></svg></div></div></div></div></div>
+
+  <!-- Bottom Divider Transition -->
+  <div class="home-hero-section__divider-wrapper" aria-hidden="true">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="home-hero-divider-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#C9A84C" stop-opacity="0.3"></stop>
+          <stop offset="50%" stop-color="#C9A84C" stop-opacity="0.6"></stop>
+          <stop offset="100%" stop-color="#C9A84C" stop-opacity="0.1"></stop>
+        </linearGradient>
+      </defs>
+      <path d="M0,80 L0,55 Q100,45 200,52 T400,48 Q500,55 600,45 T800,50 Q900,48 1000,52 T1200,48 L1200,80 Z" fill="var(--bg-dark)"></path>
+      <path d="M0,80 L0,65 Q100,55 200,60 T400,56 Q500,62 600,54 T800,58 Q900,55 1000,60 T1200,56 L1200,80 Z" fill="var(--bg-dark)" opacity="0.4"></path>
+    </svg>
+  </div>
+<div class="zappy-inserted-element" id="zappy-element-1782311842819-w4nfkg8dv" data-element-id="zappy-element-1782311842819-w4nfkg8dv" data-element-type="video" style="max-width: 1440px; margin: 20px auto; display: flex; justify-content: center; cursor: pointer;" data-video-editable="true"><div style="width: 100%; max-width: 600px; display: block; margin-left: auto; margin-right: auto;"><div style="position: relative; width: 100%; max-width: 600px; height: 0px; padding-bottom: 56.25%; background: rgba(255, 0, 131, 0.03); border: 3px solid rgb(255, 0, 131); border-radius: 16px; overflow: hidden; cursor: pointer;" data-element-type="video" data-element-id="zappy-element-1782311842819-w4nfkg8dv" id="zappy-element-1782311842819-w4nfkg8dv" data-video-editable="true"><div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;"><svg style="width: 120px; height: 120px; display: block;" viewBox="0 0 270 265" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="266" height="261" rx="40" stroke="#FF0083" stroke-width="4"></rect><g clip-path="url(#clip0_201_1806)"><path d="M102.5 91L112.5 82.5L123.5 81.5L175.5 119L182.5 131.5L178.5 142L125.5 180.5L116 183.5L109 181L102 172L102.5 91Z" fill="#FFE8F4"></path><path d="M177.228 117.668L127.264 81.483C121.838 77.496 114.723 76.929 108.729 79.9665C102.636 83.058 99 88.98 99 95.811V168.194C99 175.029 102.641 180.951 108.734 184.038C111.335 185.357 114.089 186.009 116.82 186.009C120.483 186.009 124.105 184.835 127.251 182.526L177.223 146.337L177.237 146.328C181.849 142.944 184.495 137.724 184.495 132C184.495 126.276 181.849 121.056 177.223 117.668H177.228ZM174.582 142.692L124.605 178.886C120.492 181.91 115.322 182.328 110.772 180.024C106.218 177.716 103.504 173.297 103.504 168.194V95.8065C103.504 90.708 106.223 86.289 110.772 83.976C112.703 82.995 114.736 82.5 116.82 82.5C119.587 82.5 122.283 83.4045 124.618 85.1235L174.587 121.308C178.029 123.833 180.005 127.73 180.005 132C180.005 136.271 178.034 140.163 174.587 142.692H174.582Z" fill="#FF0083"></path></g><defs><clipPath id="clip0_201_1806"><rect width="108" height="108" fill="white" transform="translate(81 78)"></rect></clipPath></defs></svg></div></div></div></div><div class="zappy-inserted-element" id="zappy-element-1782311894599-vcbuyvh6o" data-element-id="zappy-element-1782311894599-vcbuyvh6o" data-element-type="video" data-zappy-newly-inserted="true" style="max-width: 1440px; margin: 20px auto; display: flex; justify-content: center; cursor: pointer;" data-video-editable="true"><div style="width: 100%; max-width: 600px; display: block; margin-left: auto; margin-right: auto;">
+        <div style="width: 100%; max-width: 600px;">
+          <div style="position: relative; width: 100%; height: 0px; padding-bottom: 56.25%; background: transparent; border-radius: 8px; overflow: hidden; cursor: pointer;" data-element-type="video" data-video-editable="true">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+              <svg style="width: 270px; height: 265px; display: block;" viewBox="0 0 270 265" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="2" width="266" height="261" rx="40" stroke="#FF0083" stroke-width="4"></rect>
+                <g clip-path="url(#clip0_201_1806)">
+                  <path d="M102.5 91L112.5 82.5L123.5 81.5L175.5 119L182.5 131.5L178.5 142L125.5 180.5L116 183.5L109 181L102 172L102.5 91Z" fill="#FFE8F4"></path>
+                  <path d="M177.228 117.668L127.264 81.483C121.838 77.496 114.723 76.929 108.729 79.9665C102.636 83.058 99 88.98 99 95.811V168.194C99 175.029 102.641 180.951 108.734 184.038C111.335 185.357 114.089 186.009 116.82 186.009C120.483 186.009 124.105 184.835 127.251 182.526L177.223 146.337L177.237 146.328C181.849 142.944 184.495 137.724 184.495 132C184.495 126.276 181.849 121.056 177.223 117.668H177.228ZM174.582 142.692L124.605 178.886C120.492 181.91 115.322 182.328 110.772 180.024C106.218 177.716 103.504 173.297 103.504 168.194V95.8065C103.504 90.708 106.223 86.289 110.772 83.976C112.703 82.995 114.736 82.5 116.82 82.5C119.587 82.5 122.283 83.4045 124.618 85.1235L174.587 121.308C178.029 123.833 180.005 127.73 180.005 132C180.005 136.271 178.034 140.163 174.587 142.692H174.582Z" fill="#FF0083"></path>
+                </g>
+                <defs>
+                  <clipPath id="clip0_201_1806">
+                    <rect width="108" height="108" fill="white" transform="translate(81 78)"></rect>
+                  </clipPath>
+                </defs>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div></div><div class="zappy-inserted-element" id="zappy-element-1782312062439-21yudd8jn" data-element-id="zappy-element-1782312062439-21yudd8jn" data-element-type="video" data-zappy-newly-inserted="true" style="text-align: center; margin: 20px auto 0px; max-width: 480px; cursor: pointer;" data-video-editable="true"><div style="width: 100%; max-width: 600px;"><div style="position: relative; width: 100%; height: 0px; padding-bottom: 56.25%; background: rgba(255, 0, 131, 0.03); border: 3px solid rgb(255, 0, 131); border-radius: 16px; overflow: hidden; cursor: pointer;" data-element-type="video" data-element-id="zappy-element-1782312062439-21yudd8jn" id="zappy-element-1782312062439-21yudd8jn" data-video-editable="true"><div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;"><svg style="width: 120px; height: 120px; display: block;" viewBox="0 0 270 265" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="266" height="261" rx="40" stroke="#FF0083" stroke-width="4"></rect><g clip-path="url(#clip0_201_1806)"><path d="M102.5 91L112.5 82.5L123.5 81.5L175.5 119L182.5 131.5L178.5 142L125.5 180.5L116 183.5L109 181L102 172L102.5 91Z" fill="#FFE8F4"></path><path d="M177.228 117.668L127.264 81.483C121.838 77.496 114.723 76.929 108.729 79.9665C102.636 83.058 99 88.98 99 95.811V168.194C99 175.029 102.641 180.951 108.734 184.038C111.335 185.357 114.089 186.009 116.82 186.009C120.483 186.009 124.105 184.835 127.251 182.526L177.223 146.337L177.237 146.328C181.849 142.944 184.495 137.724 184.495 132C184.495 126.276 181.849 121.056 177.223 117.668H177.228ZM174.582 142.692L124.605 178.886C120.492 181.91 115.322 182.328 110.772 180.024C106.218 177.716 103.504 173.297 103.504 168.194V95.8065C103.504 90.708 106.223 86.289 110.772 83.976C112.703 82.995 114.736 82.5 116.82 82.5C119.587 82.5 122.283 83.4045 124.618 85.1235L174.587 121.308C178.029 123.833 180.005 127.73 180.005 132C180.005 136.271 178.034 140.163 174.587 142.692H174.582Z" fill="#FF0083"></path></g><defs><clipPath id="clip0_201_1806"><rect width="108" height="108" fill="white" transform="translate(81 78)"></rect></clipPath></defs></svg></div></div></div></div><div class="zappy-inserted-element" id="zappy-element-1782312612691-9ipyaof3n" data-element-id="zappy-element-1782312612691-9ipyaof3n" data-element-type="video" style="max-width: 1440px; margin: 20px auto; display: flex; justify-content: center; cursor: pointer;" data-video-editable="true"><div style="width: 100%; max-width: 600px; display: block; margin-left: auto; margin-right: auto;"><div style="position: relative; width: 100%; max-width: 600px; height: 0px; padding-bottom: 56.25%; background: rgba(255, 0, 131, 0.03); border: 3px solid rgb(255, 0, 131); border-radius: 16px; overflow: hidden; cursor: pointer;" data-element-type="video" data-element-id="zappy-element-1782312612691-9ipyaof3n" id="zappy-element-1782312612691-9ipyaof3n" data-video-editable="true"><div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;"><svg style="width: 120px; height: 120px; display: block;" viewBox="0 0 270 265" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="266" height="261" rx="40" stroke="#FF0083" stroke-width="4"></rect><g clip-path="url(#clip0_201_1806)"><path d="M102.5 91L112.5 82.5L123.5 81.5L175.5 119L182.5 131.5L178.5 142L125.5 180.5L116 183.5L109 181L102 172L102.5 91Z" fill="#FFE8F4"></path><path d="M177.228 117.668L127.264 81.483C121.838 77.496 114.723 76.929 108.729 79.9665C102.636 83.058 99 88.98 99 95.811V168.194C99 175.029 102.641 180.951 108.734 184.038C111.335 185.357 114.089 186.009 116.82 186.009C120.483 186.009 124.105 184.835 127.251 182.526L177.223 146.337L177.237 146.328C181.849 142.944 184.495 137.724 184.495 132C184.495 126.276 181.849 121.056 177.223 117.668H177.228ZM174.582 142.692L124.605 178.886C120.492 181.91 115.322 182.328 110.772 180.024C106.218 177.716 103.504 173.297 103.504 168.194V95.8065C103.504 90.708 106.223 86.289 110.772 83.976C112.703 82.995 114.736 82.5 116.82 82.5C119.587 82.5 122.283 83.4045 124.618 85.1235L174.587 121.308C178.029 123.833 180.005 127.73 180.005 132C180.005 136.271 178.034 140.163 174.587 142.692H174.582Z" fill="#FF0083"></path></g><defs><clipPath id="clip0_201_1806"><rect width="108" height="108" fill="white" transform="translate(81 78)"></rect></clipPath></defs></svg></div></div></div></div><div class="zappy-inserted-element" id="zappy-element-1782312617374-yszghgv8g" data-element-id="zappy-element-1782312617374-yszghgv8g" data-element-type="video" style="max-width: 1440px; margin: 20px auto; display: flex; justify-content: center; cursor: pointer;" data-video-editable="true"><div style="width: 100%; max-width: 600px; display: block; margin-left: auto; margin-right: auto;"><div style="position: relative; width: 100%; max-width: 600px; height: 0px; padding-bottom: 56.25%; background: rgba(255, 0, 131, 0.03); border: 3px solid rgb(255, 0, 131); border-radius: 16px; overflow: hidden; cursor: pointer;" data-element-type="video" data-element-id="zappy-element-1782312617374-yszghgv8g" id="zappy-element-1782312617374-yszghgv8g" data-video-editable="true"><div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;"><svg style="width: 120px; height: 120px; display: block;" viewBox="0 0 270 265" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="266" height="261" rx="40" stroke="#FF0083" stroke-width="4"></rect><g clip-path="url(#clip0_201_1806)"><path d="M102.5 91L112.5 82.5L123.5 81.5L175.5 119L182.5 131.5L178.5 142L125.5 180.5L116 183.5L109 181L102 172L102.5 91Z" fill="#FFE8F4"></path><path d="M177.228 117.668L127.264 81.483C121.838 77.496 114.723 76.929 108.729 79.9665C102.636 83.058 99 88.98 99 95.811V168.194C99 175.029 102.641 180.951 108.734 184.038C111.335 185.357 114.089 186.009 116.82 186.009C120.483 186.009 124.105 184.835 127.251 182.526L177.223 146.337L177.237 146.328C181.849 142.944 184.495 137.724 184.495 132C184.495 126.276 181.849 121.056 177.223 117.668H177.228ZM174.582 142.692L124.605 178.886C120.492 181.91 115.322 182.328 110.772 180.024C106.218 177.716 103.504 173.297 103.504 168.194V95.8065C103.504 90.708 106.223 86.289 110.772 83.976C112.703 82.995 114.736 82.5 116.82 82.5C119.587 82.5 122.283 83.4045 124.618 85.1235L174.587 121.308C178.029 123.833 180.005 127.73 180.005 132C180.005 136.271 178.034 140.163 174.587 142.692H174.582Z" fill="#FF0083"></path></g><defs><clipPath id="clip0_201_1806"><rect width="108" height="108" fill="white" transform="translate(81 78)"></rect></clipPath></defs></svg></div></div></div></div><div class="zappy-inserted-element" id="zappy-element-1782377595797-wwah746kz" data-element-id="zappy-element-1782377595797-wwah746kz" data-element-type="video" data-zappy-newly-inserted="true" style="text-align: center; margin: 20px auto 0px; max-width: 480px; cursor: pointer;" data-video-editable="true"><div style="width: 100%; max-width: 600px;"><div style="position: relative; width: 100%; height: 0px; padding-bottom: 56.25%; background: rgba(255, 0, 131, 0.03); border: 3px solid rgb(255, 0, 131); border-radius: 16px; overflow: hidden; cursor: pointer;" data-element-type="video" data-element-id="zappy-element-1782377595797-wwah746kz" id="zappy-element-1782377595797-wwah746kz" data-video-editable="true"><div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;"><svg style="width: 120px; height: 120px; display: block;" viewBox="0 0 270 265" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="266" height="261" rx="40" stroke="#FF0083" stroke-width="4"></rect><g clip-path="url(#clip0_201_1806)"><path d="M102.5 91L112.5 82.5L123.5 81.5L175.5 119L182.5 131.5L178.5 142L125.5 180.5L116 183.5L109 181L102 172L102.5 91Z" fill="#FFE8F4"></path><path d="M177.228 117.668L127.264 81.483C121.838 77.496 114.723 76.929 108.729 79.9665C102.636 83.058 99 88.98 99 95.811V168.194C99 175.029 102.641 180.951 108.734 184.038C111.335 185.357 114.089 186.009 116.82 186.009C120.483 186.009 124.105 184.835 127.251 182.526L177.223 146.337L177.237 146.328C181.849 142.944 184.495 137.724 184.495 132C184.495 126.276 181.849 121.056 177.223 117.668H177.228ZM174.582 142.692L124.605 178.886C120.492 181.91 115.322 182.328 110.772 180.024C106.218 177.716 103.504 173.297 103.504 168.194V95.8065C103.504 90.708 106.223 86.289 110.772 83.976C112.703 82.995 114.736 82.5 116.82 82.5C119.587 82.5 122.283 83.4045 124.618 85.1235L174.587 121.308C178.029 123.833 180.005 127.73 180.005 132C180.005 136.271 178.034 140.163 174.587 142.692H174.582Z" fill="#FF0083"></path></g><defs><clipPath id="clip0_201_1806"><rect width="108" height="108" fill="white" transform="translate(81 78)"></rect></clipPath></defs></svg></div></div></div></div></section>
+
+<section data-band-index="1" class="home-intro-section" data-layout-spec="Home-intro" id="home-intro-section">
+  <div class="home-intro-section__container">
+    <!-- Text Column -->
+    <div class="home-intro-section__content">
+      <h2 class="home-intro-section__heading" style="">Meet Lyn Miller Mr Boynton Beach</h2>
+      <h3 class="home-intro-section__subheading" style="">this is all I do and I do it well !&nbsp;</h3>
+      <p class="home-intro-section__paragraph" style="">&nbsp; For over 24 years, Lyn Miller has helped buyers and sellers successfully navigate the Palm Beach County real estate market with honesty, experience, and personal service. Since becoming licensed in 2002, Lyn has built his business on referrals, repeat clients, and a reputation for always putting people first.<br>Specializing in Boca Raton, West Palm Beach, Delray Beach, and surrounding South Florida communities, Lyn works with home buyers, sellers, investors, seasonal residents, and out-of-town property owners. Whether helping a first-time buyer, marketing a luxury property, or assisting a family through an important life transition, Lyn believes communication, hard work, and attention to detail make all the difference.<br>Known for his strong online marketing, video promotions, and local market knowledge, Lyn combines old-school customer service with modern technology to help properties stand out and attract serious buyers. His clients appreciate his responsiveness, straightforward advice, and ability to make the process smooth from start to finish.<br>Lyn has earned over 100 positive reviews on Zillow and Google from clients who value his professionalism, experience, and dedication.<br>"This is all I do &amp; I do it well."<br>If you are thinking about buying, selling, investing, or simply want honest advice about the South Florida market, Lyn would be honored to help.&nbsp;&nbsp;</p>
+      
+      
+      <!-- Value Points -->
+      <div class="home-intro-section__values">
+        <div class="home-intro-section__value-item">
+          <div class="home-intro-section__value-icon" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg>
+          </div>
+          <p><span class="home-intro-section__value-text">Unmatched Local Insight</span>
+        </p></div>
+        <div class="home-intro-section__value-item">
+          <div class="home-intro-section__value-icon" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+          </div>
+          <p><span class="home-intro-section__value-text">Relaxed, Personal Guidance</span>
+        </p></div>
+        <div class="home-intro-section__value-item">
+          <div class="home-intro-section__value-icon" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path></svg>
+          </div>
+          <p><span class="home-intro-section__value-text">Authentic Coastal Spirit</span>
+        </p></div>
+      </div>
+    </div>
+
+    <!-- Image Column -->
+    <div class="home-intro-section__image-wrapper">
+      <div class="home-intro-section__image-ring">
+        <div data-zappy-zoom-wrapper="true" data-element-id="img-1780952407361-dghua5eqv" data-element-type="image" data-zappy-zoom-wrapper-width="384px" data-zappy-zoom-wrapper-height="600px" data-zappy-zoom-wrapper-width-mode="px" data-zappy-zoom-wrapper-align="center" style="position: relative !important; overflow: hidden !important; width: 384px !important; max-width: 100% !important; margin-left: auto !important; margin-right: auto !important; height: 600px !important; display: block !important;" data-zappy-zoom-clip="true" data-zappy-wrapper-margins-applied="true"><img decoding="async" data-placeholder="home-intro-image-1" data-context="A charismatic, smiling host figure with a warm, approachable demeanor, styled in relaxed yet polished coastal attire, set against a soft beach sunset background, circular framing with a thin gold ring accent" width="400" height="400" src="/assets/site-home-intro-image-1-1780955714176-o48wka.webp?v=1780955716036" alt="Portrait of Mr. Boynton Beach, a warm and inviting local host" data-element-type="image" data-element-id="img-1780952407361-dghua5eqv" style="border-radius: 8px; object-position: 50% 50% !important; display: block !important; object-fit: fill !important; width: 121.042% !important; height: 100% !important; max-width: none !important; margin: 0px !important; position: absolute !important; left: -10.5208% !important; top: 0% !important; max-height: none !important;" data-zappy-object-position="50% 50%" data-zappy-zoom="0.9" data-zappy-original-width="384" data-zappy-original-height="600"></div>
+      </div>
+      <!-- Decorative wavy line accent -->
+      <svg class="home-intro-section__wave-accent" data-no-icon-edit="true" aria-hidden="true" width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 20 Q15 5 30 20 T60 20 T90 20 T120 20" stroke="var(--primary)" stroke-width="1.5" fill="none" opacity="0.4"></path>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Bottom Divider: Torn-paper curve in soft champagne -->
+  <div class="home-intro-section__divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,80 L0,45 Q30,50 60,42 T120,38 Q150,45 180,40 T240,42 Q270,48 300,38 T360,44 Q390,50 420,40 T480,42 Q510,48 540,38 T600,44 Q630,50 660,40 T720,42 Q750,48 780,38 T840,44 Q870,50 900,40 T960,42 Q990,48 1020,38 T1080,44 Q1110,50 1140,40 T1200,45 L1200,80 Z" fill="var(--bg-light)"></path>
+    </svg>
+  </div>
+</section>
+
+<section data-band-index="2" class="home-features-section" data-layout-spec="Home-features" id="home-features-section">
+  <div class="home-features-section__container">
+    <div class="home-features-section__title-area">
+      <h2 class="home-features-section__heading" style="">My Trusted Mortgage Brokers here in Palm Beach County</h2>
+      <p class="home-features-section__subtitle" style="color: rgb(31, 31, 31) !important;">some of my top local mortgage brokers that I trust .</p>
+    </div>
+    <div class="home-features-section__card-grid zappy-preserve-css-grid" id="zappy-auto-grid-1780951969504-0fips7" data-zappy-auto-grid="true" data-original-item-width="379" data-original-gap="32px" style="display: grid; --zappy-grid-cols: repeat(3, minmax(0, 1fr)); grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch !important;" data-zappy-explicit-columns="true">
+      <article class="home-features-section__card" data-grid-item-index="0" style="">
+        <figure class="home-features-section__card-media">
+          <a data-zappy-click-action="link" href="file:///C:/Users/lynm1/Downloads/Charlie%20Eelman5366%20-%20reduced%20size%20(2).pdf" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit; display: contents;"><div data-zappy-zoom-wrapper="true" data-element-id="img-1780951969478-oame7bsg0" data-element-type="image" data-zappy-zoom-wrapper-width="377px" data-zappy-zoom-wrapper-height="251px" data-zappy-zoom-wrapper-width-mode="px" data-zappy-zoom-wrapper-align="center" style="position: relative !important; overflow: hidden !important; width: 377px !important; max-width: 100% !important; margin-left: auto !important; margin-right: auto !important; height: 251px !important; display: block !important; cursor: pointer;" data-zappy-zoom-clip="true" data-zappy-wrapper-margins-applied="true" data-zappy-card-slot-fill="1" data-zappy-click-action="link"><img decoding="async" data-placeholder="home-features-image-3" data-context="A vibrant street scene along Ocean Avenue in downtown Boynton Beach, with outdoor cafe seating, palm trees, and locals walking, golden hour light, lifestyle editorial style" width="600" height="400" src="/assets/image-1781796317694-qb859g.webp?v=1781796319977" alt="Vibrant street scene along Ocean Avenue in downtown Boynton Beach" data-element-type="image" data-element-id="img-1781619140631-qv8cw0tyu" style="display: block !important; object-position: 50% 50% !important; object-fit: cover !important; margin: 0px !important; left: 0% !important; top: -0.0351095% !important; width: 100% !important; height: 100.07% !important; max-width: none !important; max-height: none !important; position: absolute !important;" data-zappy-zoom="1" data-zappy-original-width="377.07501220703125" data-zappy-original-height="251.375" data-zappy-object-position="50% 50%" data-zappy-click-action="link"></div></a>
+        </figure>
+        <div class="home-features-section__card-body">
+          <h3 class="home-features-section__card-title" style=""><p style=""></p><p style=""></p></h3><h3 style="">Lisa Posta&nbsp; 561-289-4534&nbsp;</h3><p style="">&nbsp; Born in Key West and proudly serving South Florida for more than 23 years, Lisa Posta has helped hundreds of families, Realtors, and builders navigate the path to homeownership. A former Miami Dolphins Cheerleader, Lisa brings that same energy, dedication, and team spirit to every client she serves. Known for her responsiveness, local expertise, and personalized service, Lisa works directly with her clients from application to closing, making the mortgage process simple, smooth, and stress-free.&nbsp; &nbsp;</p>
+          
+        </div>
+      </article><article class="home-features-section__card" data-grid-item-index="1">
+        <figure class="home-features-section__card-media">
+          <input type="checkbox" id="zappy-lightbox-toggle-img-1780951969478-5ib5g86np" class="zappy-lightbox-toggle" data-zappy-image-lightbox="true"><label class="zappy-lightbox-trigger" for="zappy-lightbox-toggle-img-1780951969478-5ib5g86np" data-zappy-image-lightbox="true"><div data-zappy-zoom-wrapper="true" data-element-id="img-1780951969478-5ib5g86np" data-element-type="image" data-zappy-zoom-wrapper-width="377px" data-zappy-zoom-wrapper-height="252px" data-zappy-zoom-wrapper-width-mode="grid-responsive" data-zappy-zoom-wrapper-align="center" style="cursor: pointer; position: relative !important; overflow: hidden !important; width: 100% !important; max-width: 100% !important; margin-left: auto !important; margin-right: auto !important; height: 252px !important; display: block !important; padding-bottom: 66.9031% !important;" data-zappy-zoom-clip="true" data-zappy-wrapper-margins-applied="true" data-zappy-card-slot-fill="1" data-zappy-zoom-aspect-ratio="0.669031" data-zappy-click-action="expand"><img decoding="async" data-placeholder="home-features-image-1" data-context="A happy multi-generational family enjoying a sunny beach day in Boynton Beach, Florida, with golden sand, turquoise water, and a colorful beach umbrella, warm natural light, magazine editorial style" width="600" height="400" src="/assets/image-1781788269388-f9w4hq.webp?v=1781788271736" alt="Family enjoying a sunny beach day in Boynton Beach" data-element-type="image" data-element-id="img-1780951969478-5ib5g86np" style="object-position: 50% 33% !important; display: block !important; object-fit: cover !important; margin: 0px !important; left: -5% !important; top: -53.3613% !important; width: 110% !important; height: 261.701% !important; max-width: none !important; max-height: none !important; position: absolute !important;" data-zappy-zoom="1.1" data-zappy-original-width="377.0625" data-zappy-original-height="251.6875" data-zappy-object-position="50% 33%" data-zappy-click-action="expand"></div></label>
+        </figure>
+        <div class="home-features-section__card-body">
+          <h3 class="home-features-section__card-title" style="">Charlie Eelman 609-649-8355</h3>
+          <p class="home-features-section__card-text" style="color: rgb(31, 31, 31) !important;">&nbsp; As a dedicated Mortgage Advisor, I passionately believe in my mission: "Deliver the dream of homeownership while providing a level of service, expertise, and dedication that are second to none."<br><br>Whether you're buying, selling, refinancing, or building your dream home, you have a lot riding on your loan specialist. As an experienced loan officer I have the knowledge and expertise you need to explore the many financing options available. I am committed to providing my customers with a mortgage experience that far exceeds their expectations.&nbsp;&nbsp;</p>
+        </div>
+      </article>
+      <article class="home-features-section__card" data-grid-item-index="2" style="">
+        <figure class="home-features-section__card-media">
+          <div data-zappy-zoom-wrapper="true" data-element-id="img-1780951969478-67v75zvva" data-element-type="image" data-zappy-zoom-wrapper-width="377px" data-zappy-zoom-wrapper-height="252px" data-zappy-zoom-wrapper-width-mode="px" data-zappy-zoom-wrapper-align="center" style="position: relative !important; overflow: hidden !important; width: 377px !important; max-width: 100% !important; margin-left: auto !important; margin-right: auto !important; height: 252px !important; display: block !important;" data-zappy-zoom-clip="true" data-zappy-wrapper-margins-applied="true" data-zappy-card-slot-fill="1"><img decoding="async" data-placeholder="home-features-image-2" data-context="A serene boardwalk through lush mangroves at Green Cay Nature Center in Boynton Beach, with a great blue heron wading in the water, soft morning light, nature photography style" width="600" height="400" src="/assets/image-1781788148091-bc01lg.webp?v=1781788150519" alt="Lily Kondo, Mortgage Loan Counselor at New American Funding" data-element-type="image" data-element-id="img-1780951969478-67v75zvva" style="object-position: 61% 0% !important; display: block !important; object-fit: cover !important; margin: 0px !important; left: -1.46827% !important; top: 0% !important; width: 102.407% !important; height: 175.248% !important; max-width: none !important; max-height: none !important; position: absolute !important;" data-zappy-zoom="1.02407" data-zappy-original-width="377.0625" data-zappy-original-height="251.6875" data-zappy-object-position="61% 0%"></div>
+        </figure>
+        <div class="home-features-section__card-body">
+          <h3 class="home-features-section__card-title" style="">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Roger Dobson&nbsp; 863-602-2260</h3>
+          <h3 style=""><p style="">&nbsp; With 34 years of national mortgage experience and over 120 verified recommendations, I provide comprehensive, personalized mortgage solutions-ranging from down payment assistance to specialized investor and renovation financing. My approach prioritizes transparency, utilizing live, face-to-face Zoom consultations to review 6 to 12 customized loan scenarios in real time, ensuring we refine a strategy that perfectly aligns with your specific financial goals.</p></h3>
+        </div>
+      </article>
+      
+    </div>
+  </div>
+  <div class="home-features-section__divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1200 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="home-features-sweep" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="var(--bg-light)"></stop>
+          <stop offset="100%" stop-color="var(--bg-dark)"></stop>
+        </linearGradient>
+      </defs>
+      <path d="M0,80 L0,0 L1200,80 L1200,80 Z" fill="var(--bg-light)"></path>
+      <path d="M0,0 L1200,80" stroke="var(--primary)" stroke-width="2" fill="var(--bg-light)" opacity="0.8"></path>
+    </svg>
+  </div>
+</section>
+
+<section id="layout-1782307355596" class="layout-section" data-zappy-component="true" style="width: 100%; padding: 60px 0px; direction: ltr;" data-component-id="videocard-2col">
+  <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;">
+  <h2 style="font-size: 32px; font-weight: 700; color: rgb(31, 41, 55); margin-bottom: 40px; text-align: center;">Good people I trust and recommend here in Palm Beach County&nbsp;</h2>
+  <div class="video-card-grid zappy-preserve-css-grid" style="display: grid; gap: 30px; --zappy-grid-cols: repeat(3, minmax(0, 1fr)); grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch !important;" id="zappy-auto-grid-1782307356783-lkjv3y" data-zappy-auto-grid="true" data-original-item-width="364" data-original-gap="30px" data-zappy-explicit-columns="true">
+    <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);" data-grid-item-index="0">
+      <div class="zappy-inserted-element" id="zappy-element-1782307355596-uce6jw8l8" data-element-id="zappy-element-1782307355596-uce6jw8l8" data-element-type="video" data-zappy-newly-inserted="true" style="margin-top: 20px; margin-bottom: 20px; display: flex; justify-content: center; cursor: pointer; text-align: center;" data-video-editable="true">
+      <div style="width: 100%; max-width: 500px; display: block; margin-left: auto; margin-right: auto;">
+        <div class="video-placeholder" style="position: relative; width: 100%; max-width: 800px; height: 0px; padding-bottom: 56.25%; background: rgb(0, 0, 0); border-radius: 8px; overflow: hidden;" data-element-type="video" data-element-id="zappy-element-1782307355596-uce6jw8l8" data-placeholder="video-placeholder" id="zappy-element-1782307355596-uce6jw8l8-inner" data-video-editable="true"><iframe src="https://www.youtube.com/embed/I87FSR5PTEA" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; " allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+      </div>
+    </div>
+      <div style="padding: 24px;">
+        <h3 style="font-size: 22px; font-weight: 600; color: rgb(31, 41, 55); margin-bottom: 12px;">&nbsp;buying a pool what to look for</h3>
+        <p style="font-size: 16px; line-height: 1.6; color: rgb(31, 41, 55); opacity: 0.8;">important things to look for when buying a pool home here in South Florida&nbsp;</p>
+      </div>
+    </div>
+    <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);" data-grid-item-index="1">
+      <div class="zappy-inserted-element" id="zappy-element-1782307355596-mefejxhku" data-element-id="zappy-element-1782307355596-mefejxhku" data-element-type="video" data-zappy-newly-inserted="true" style="margin-top: 20px; margin-bottom: 20px; display: flex; justify-content: center; cursor: pointer; text-align: center;" data-video-editable="true">
+      <div style="width: 100%; max-width: 500px; display: block; margin-left: auto; margin-right: auto;">
+        <div class="video-placeholder" style="position: relative; width: 100%; max-width: 800px; height: 0px; padding-bottom: 56.25%; background: rgb(0, 0, 0); border-radius: 8px; overflow: hidden;" data-element-type="video" data-element-id="zappy-element-1782307355596-mefejxhku" data-placeholder="video-placeholder" id="zappy-element-1782307355596-mefejxhku-inner" data-video-editable="true"><iframe src="https://www.youtube.com/embed/1VhodWeHY6Y" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; " allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+      </div>
+    </div>
+      <div style="padding: 24px;">
+        <h3 style="font-size: 22px; font-weight: 600; color: rgb(31, 41, 55); margin-bottom: 12px;">screen repair call Roger&nbsp;</h3>
+        <p style="font-size: 16px; line-height: 1.6; color: rgb(31, 41, 55); opacity: 0.8;">for any screen repair, call Roger&nbsp; 954-444-3846&nbsp; or&nbsp; 561-253-5043</p>
+      </div>
+    </div><div style="background-color: rgb(255, 255, 255) !important; grid-area: auto !important;" data-grid-item-index="2">
+      <div class="zappy-inserted-element" id="zappy-element-1782307355596-mefejxhku-add-1782307360336-zuudl6-add-1782307361529-tyf8h1-add-1782307363297-haqq0i-add-1782309945770-pli76j" data-element-id="new-grid-video-1782309945770-0-rx9y9s7my" data-element-type="video" data-zappy-newly-inserted="true" style="position: relative; width: 100%; max-width: 800px; height: 0px; padding-bottom: 56.25%; background: rgb(0, 0, 0); border-radius: 8px; overflow: hidden; margin: 20px auto; display: block;" data-video-editable="true" data-placeholder="video-placeholder"><iframe src="https://www.youtube.com/embed/TkWbCXjsByg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; " allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+      <div style="padding: 24px;">
+        <h3 style="font-size: 22px; font-weight: 600; color: rgb(31, 41, 55); margin-bottom: 12px; cursor: text;">Fidel does tree trimming&nbsp;</h3>
+        <p style="font-size: 16px; line-height: 1.6; color: rgb(31, 41, 55); opacity: 0.8; cursor: text;">Fidel is the man to call when you need trees cut or any vegitation&nbsp; 305-783-1141</p>
+      </div>
+    </div><div style="background-color: rgb(255, 255, 255) !important; grid-area: auto !important;" data-grid-item-index="3">
+      <div class="zappy-inserted-element" id="zappy-element-1782307355596-mefejxhku-add-1782307360336-zuudl6-add-1782307361529-tyf8h1-add-1782307363297-haqq0i-add-1782309945770-pli76j-add-1782309945797-pgvaoq" data-element-id="new-grid-video-1782309945798-0-jj7pknyql" data-element-type="video" data-zappy-newly-inserted="true" style="position: relative; width: 100%; max-width: 800px; height: 0px; padding-bottom: 56.25%; background: rgb(0, 0, 0); border-radius: 8px; overflow: hidden; margin: 20px auto; display: block;" data-video-editable="true" data-placeholder="video-placeholder"><iframe src="https://www.youtube.com/embed/RLAPNS3ZJoU" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; " allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+      <div style="padding: 24px;">
+        <h3 style="font-size: 22px; font-weight: 600; color: rgb(31, 41, 55); margin-bottom: 12px; cursor: text;">Bradley Walls home inspector</h3>
+        <p style="font-size: 16px; line-height: 1.6; color: rgb(31, 41, 55); opacity: 0.8; cursor: text;">I highly recommend all buyers to get a home inspection from a licensed inspector, call Brad Walls&nbsp; 561079809483 or 561-504-5934&nbsp;</p>
+      </div>
+    </div><div style="background-color: rgb(255, 255, 255) !important; grid-area: auto !important;" data-grid-item-index="4">
+      <div class="zappy-inserted-element" id="zappy-element-1782307355596-mefejxhku-add-1782307360336-zuudl6-add-1782307361529-tyf8h1-add-1782307363297-haqq0i-add-1782309945770-pli76j-add-1782309945797-pgvaoq-add-1782310150554-ax7eie" data-element-id="new-grid-video-1782310150554-0-1frgx089n" data-element-type="video" data-zappy-newly-inserted="true" style="position: relative; width: 100%; max-width: 800px; height: 0px; padding-bottom: 56.25%; background: rgb(0, 0, 0); border-radius: 8px; overflow: hidden; margin: 20px auto; display: block;" data-video-editable="true" data-placeholder="video-placeholder"><iframe src="https://www.youtube.com/embed/-jEZlAR5Zec" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; " allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+      <div style="padding: 24px;">
+        <h3 style="font-size: 22px; font-weight: 600; color: rgb(31, 41, 55); margin-bottom: 12px; cursor: text;">call Brian for Auto Repair&nbsp;</h3>
+        <p style="font-size: 16px; line-height: 1.6; color: rgb(31, 41, 55); opacity: 0.8; cursor: text;">for honest car repais here in Boca Raton, call Brian and Caroline at 561-654-1652&nbsp;</p>
+      </div>
+    </div><div style="background-color: rgb(255, 255, 255) !important; grid-area: auto !important;" data-grid-item-index="5">
+      <div class="zappy-inserted-element" id="zappy-element-1782307355596-mefejxhku-add-1782307360336-zuudl6-add-1782307361529-tyf8h1-add-1782307363297-haqq0i-add-1782309945770-pli76j-add-1782309945797-pgvaoq-add-1782310150554-ax7eie-add-1782310207174-38yx7c" data-element-id="new-grid-video-1782310207175-0-apegubiyh" data-element-type="video" data-zappy-newly-inserted="true" style="position: relative; width: 100%; max-width: 800px; height: 0px; padding-bottom: 56.25%; background: rgb(0, 0, 0); border-radius: 8px; overflow: hidden; margin: 20px auto; display: block;" data-video-editable="true" data-placeholder="video-placeholder"><iframe src="https://www.youtube.com/embed/awDO-IVwJZQ" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; " allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+      <div style="padding: 24px;">
+        <h3 style="font-size: 22px; font-weight: 600; color: rgb(31, 41, 55); margin-bottom: 12px; cursor: text;">JB at Home Stretch&nbsp;</h3>
+        <p style="font-size: 16px; line-height: 1.6; color: rgb(31, 41, 55); opacity: 0.8; cursor: text;">JB at Homes Stretch can show you hwo to get more money for your home&nbsp; 561-403-0026&nbsp;</p>
+      </div>
+    </div><div style="background-color: rgb(255, 255, 255) !important; grid-area: auto !important;" data-grid-item-index="6">
+      <div class="zappy-inserted-element" id="zappy-element-1782307355596-mefejxhku-add-1782307360336-zuudl6-add-1782307361529-tyf8h1-add-1782307363297-haqq0i-add-1782309945770-pli76j-add-1782309945797-pgvaoq-add-1782310150554-ax7eie-add-1782310207174-38yx7c-add-1782314670666-2slal1" data-element-id="new-grid-video-1782314670666-0-s16es9mdj" data-element-type="video" data-zappy-newly-inserted="true" style="position: relative; width: 100%; max-width: 800px; height: 0px; padding-bottom: 56.25%; background: rgb(0, 0, 0); border-radius: 8px; overflow: hidden; margin: 20px auto; display: block;" data-video-editable="true" data-placeholder="video-placeholder"><iframe src="https://www.youtube.com/embed/Yejbo255bzY" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; " allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+      <div style="padding: 24px;">
+        <h3 style="font-size: 22px; font-weight: 600; color: rgb(31, 41, 55); margin-bottom: 12px; cursor: text;">Signature Flooring&nbsp;</h3>
+        <p style="font-size: 16px; line-height: 1.6; color: rgb(31, 41, 55); opacity: 0.8; cursor: text;">if you are needing flooring call Josh Miller at 561-289-3055</p>
+      </div>
+    </div><div style="background-color: rgb(255, 255, 255) !important; grid-area: auto !important;" data-grid-item-index="7">
+      <div class="zappy-inserted-element" id="zappy-element-1782307355596-mefejxhku-add-1782307360336-zuudl6-add-1782307361529-tyf8h1-add-1782307363297-haqq0i-add-1782309945770-pli76j-add-1782309945797-pgvaoq-add-1782310150554-ax7eie-add-1782310207174-38yx7c-add-1782314670666-2slal1-add-1782314808986-ayuksz" data-element-id="new-grid-video-1782314808986-0-o1blajote" data-element-type="video" data-zappy-newly-inserted="true" style="position: relative; width: 100%; max-width: 800px; height: 0px; padding-bottom: 56.25%; background: rgb(0, 0, 0); border-radius: 8px; overflow: hidden; margin: 20px auto; display: block;" data-video-editable="true" data-placeholder="video-placeholder"><iframe src="https://www.youtube.com/embed/72natVrkAcs" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; " allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+      <div style="padding: 24px;">
+        <h3 style="font-size: 22px; font-weight: 600; color: rgb(31, 41, 55); margin-bottom: 12px; cursor: text;">Jonathan Bloom ESQ&nbsp;</h3>
+        <p style="font-size: 16px; line-height: 1.6; color: rgb(31, 41, 55); opacity: 0.8; cursor: text;">Jonathan Bloom is my go to professional for legal services here in Boca Raton, you can call Jonathan at 561-864-0000&nbsp;</p>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+<section data-band-index="4" class="home-cta-section" data-layout-spec="Home-cta" id="home-cta-section">
+  <!-- Decorative quotation marks ornament -->
+  <div class="home-cta-section__ornament" aria-hidden="true">
+    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" data-element-type="icon" data-element-id="icon-1780955693432-xjdiyonak" data-icon-type="svg">
+      <path d="M10 70V40C10 28.954 18.954 20 30 20H35L30 30H25C22.239 30 20 32.239 20 35V40H30V70H10Z" fill="currentColor" opacity="0.25"></path>
+      <path d="M45 70V40C45 28.954 53.954 20 65 20H70L65 30H60C57.239 30 55 32.239 55 35V40H65V70H45Z" fill="currentColor" opacity="0.25"></path>
+    </svg>
+  </div>
+
+  <div class="home-cta-section__container">
+    <h2 class="home-cta-section__heading" style="">Help center&nbsp;</h2>
+    <p class="home-cta-section__text" style="color: rgb(31, 31, 31) !important;">&nbsp;this is my help center , , , , you will not be talking to a chat BOT , , like all the other web sites&nbsp; , , when you have a question, you can call or text me at 561-445-8719 and i will answer the phone on the first ring and give you the answer&nbsp; &nbsp; I like to make the business fun ! .</p>
+    
+    <div class="home-cta-section__actions">
+      <a href="/contact" class="home-cta-section__btn home-cta-section__btn--primary" data-element-type="button" data-element-id="btn-1780955693429-hz8gczz85" data-native-element="true">
+        Get in Touch
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </a>
+      <a href="/about" class="home-cta-section__btn home-cta-section__btn--secondary" style="color: rgb(31, 31, 31) !important;" data-element-type="button" data-element-id="btn-1780955693429-ed1rt7mim" data-native-element="true">
+        Learn More About Us
+      </a>
+    </div>
+  </div>
+</section>
+  </main>
+  
+  
+
+<section id="layout-1780950707989" class="layout-section" data-zappy-component="true" style="width: 100%; padding: 60px 0; direction: ltr;" data-component-id="videocard-3col">
+  <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;">
+  <h2 style="font-size: 32px; font-weight: 700; color: rgb(31, 41, 55); margin-bottom: 40px; text-align: center;">Watch these fun exciting video's promoting my friends small business's&nbsp;</h2>
+  <div class="video-card-grid zappy-preserve-css-grid" style="display: grid; --zappy-grid-cols: repeat(3, minmax(0, 1fr)); grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 25px; align-items: stretch !important;" id="zappy-auto-grid-1780955693458-hfljid" data-zappy-auto-grid="true" data-original-item-width="367" data-original-gap="25px" data-zappy-explicit-columns="true">
+    <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);" data-grid-item-index="0">
+      <div class="zappy-inserted-element" id="zappy-element-1780950707989-9cq1h9rzq" data-element-id="zappy-element-1780950707989-9cq1h9rzq" data-element-type="video" data-zappy-newly-inserted="true" style="margin-top: 20px; margin-bottom: 20px; display: flex; justify-content: center; cursor: pointer; text-align: center;" data-video-editable="true">
+      <div style="width: 100%; max-width: 350px; display: block; margin-left: auto; margin-right: auto;">
+        <div class="video-placeholder" style="position: relative; width: 100%; max-width: 800px; height: 0px; padding-bottom: 56.25%; background: rgb(0, 0, 0); border-radius: 8px; overflow: hidden;" data-element-type="video" data-element-id="zappy-element-1780950707989-9cq1h9rzq" data-placeholder="video-placeholder" id="zappy-element-1780950707989-9cq1h9rzq-inner" data-video-editable="true"><iframe src="https://www.youtube.com/embed/hKCLiIaxzOw" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; " allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+      </div>
+    </div>
+      <div style="padding: 20px;">
+        <h3 style="font-size: 20px; font-weight: 600; color: rgb(31, 41, 55); margin-bottom: 10px;">hurricane Preparedness&nbsp;</h3>
+        <p style="font-size: 15px; line-height: 1.6; color: rgb(31, 41, 55); opacity: 0.8;">We are in hurricane season, you want to be prepared , I can help&nbsp;</p>
+      </div>
+    </div>
+    <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);" data-grid-item-index="1">
+      <div class="zappy-inserted-element" id="zappy-element-1780950707989-szfo23fpw" data-element-id="zappy-element-1780950707989-szfo23fpw" data-element-type="video" data-zappy-newly-inserted="true" style="margin-top: 20px; margin-bottom: 20px; display: flex; justify-content: center; cursor: pointer; text-align: center;" data-video-editable="true">
+      <div style="width: 100%; max-width: 350px; display: block; margin-left: auto; margin-right: auto;">
+        <div class="video-placeholder" style="position: relative; width: 100%; max-width: 800px; height: 0px; padding-bottom: 56.25%; background: rgb(0, 0, 0); border-radius: 8px; overflow: hidden;" data-element-type="video" data-element-id="zappy-element-1780950707989-szfo23fpw" data-placeholder="video-placeholder" id="zappy-element-1780950707989-szfo23fpw-inner" data-video-editable="true"><iframe src="https://www.youtube.com/embed/8t62VPgqTfE" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; " allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+      </div>
+    </div>
+      <div style="padding: 20px;">
+        <h3 style="font-size: 20px; font-weight: 600; color: rgb(31, 41, 55); margin-bottom: 10px;">Little Bird Pool Service&nbsp;</h3>
+        <p style="font-size: 15px; line-height: 1.6; color: rgb(31, 41, 55); opacity: 0.8;">for all your pool service needs contact Allesandra and Eduardo at 754-235-2254&nbsp; or&nbsp; 561-962-5647&nbsp;</p>
+      </div>
+    </div>
+    <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08);" data-grid-item-index="2">
+      <div class="zappy-inserted-element" id="zappy-element-1780950707989-whuzwifik" data-element-id="zappy-element-1780950707989-whuzwifik" data-element-type="video" data-zappy-newly-inserted="true" style="margin-top: 20px; margin-bottom: 20px; display: flex; justify-content: center; cursor: pointer; text-align: center;" data-video-editable="true">
+      <div style="width: 100%; max-width: 350px; display: block; margin-left: auto; margin-right: auto;">
+        <div class="video-placeholder" style="position: relative; width: 100%; max-width: 800px; height: 0px; padding-bottom: 56.25%; background: rgb(0, 0, 0); border-radius: 8px; overflow: hidden;" data-element-type="video" data-element-id="zappy-element-1780950707989-whuzwifik" data-placeholder="video-placeholder" id="zappy-element-1780950707989-whuzwifik-inner" data-video-editable="true"><iframe src="https://www.youtube.com/embed/b_X4fqUltfc" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; " allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+      </div>
+    </div>
+      <div style="padding: 20px;">
+        <h3 style="font-size: 20px; font-weight: 600; color: rgb(31, 41, 55); margin-bottom: 10px;">Lisa Posta Fairway Mortgage&nbsp;</h3>
+        <p style="font-size: 15px; line-height: 1.6; color: rgb(31, 41, 55); opacity: 0.8;">Call Lisa Posta&nbsp; for all your home mortgage needs 561-289-4534</p>
+      </div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-grid">
+      <!-- Company Info -->
+      <div class="footer-col footer-company-col">
+        <img src="/assets/mr-boynton-beach-beach-lifestyle-logo.webp" alt="Mr. Boynton Beach" class="logo">
+        <p class="footer-tagline">Premium coastal lifestyle experiences curated by Mr. Boynton Beach — your local guide to sun, sand, and sophisticated living.</p>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-col footer-links-col">
+        <h4>Quick Links</h4>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/experiences">Experiences</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="footer-col footer-contact-col">
+        <h4>Contact</h4>
+        <ul class="footer-contact">
+          <li>
+            <span class="contact-icon"><i class="fas fa-envelope"></i></span>
+            <span class="contact-text"><a href="mailto:mrboyntonbeach@gmail.com">mrboyntonbeach@gmail.com</a></span>
+          </li>
+          <li>
+            <span class="contact-icon"><i class="fas fa-phone"></i></span>
+            <span class="contact-text"><a href="tel:15614458719">15614458719</a></span>
+          </li>
+          <li><a href="/"><span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span>
+            <span class="contact-text">7555 Sierra Drive E, Boca Raton, Florida, 33433, US</span></a></li>
+        </ul>
+      </div>
+
+      <!-- Business Hours -->
+      <div class="footer-col footer-hours-col">
+        <h4>Opening Hours</h4>
+        <ul class="footer-hours">
+          <li><a href="/"><span class="hours-day">Mon–Fri</span> <span class="hours-time">09:00–18:00</span></a></li>
+          <li><a href="/"><span class="hours-day">Sat</span> <span class="hours-time">09:00–13:00</span></a></li>
+          <li><a href="/"><span class="hours-day">Sun</span> <span class="hours-time">Closed</span></a></li>
+        </ul>
+      </div>
+
+      <!-- Social Media -->
+      <div class="footer-col footer-social-col">
+        <h4>Follow Us</h4>
+        <div class="footer-social">
+          <a href="https://facebook.com/MrBoyntonBeach" aria-label="Facebook" data-zappy-social-placeholder="true"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://instagram.com/lynm1955" aria-label="Instagram" data-zappy-social-placeholder="true"><i class="fab fa-instagram"></i></a>
+          <a href="https://twitter.com/Lynmiller1955" aria-label="Twitter" data-element-id="element-ai-1780952392616-x8k2m9" data-element-type="social-link"><i class="fab fa-twitter"></i></a>
+          <a href="https://linkedin.com/company/lyn-miller-3ab66910" aria-label="LinkedIn" data-element-id="element-ai-1780952392616-p4v7n1" data-element-type="social-link"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" aria-label="WhatsApp" data-zappy-social-placeholder="true" style="display:none !important;"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="footer-bottom">
+    <div class="footer-container footer-bottom-inner">
+      <p class="footer-copyright">© 2026 Mr. Boynton Beach. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms &amp; Conditions</a>
+        <a href="/accessibility">Accessibility</a>
+        <a href="https://zappy5.com" target="_blank" class="zappy-attribution">Generated by Zappy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+  
+  <a href="https://wa.me/15614458719" class="whatsapp-float" aria-label="WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+  
+  <div data-integration="accessibility:toolbar"></div>
+
+    <script src="/script.js"></script>
+
+    <script id="zappy-mobile-submenu-script">
+    (function() {
+      function initMobileSubmenuToggles() {
+        if (window.innerWidth > 768) {
+          document.querySelectorAll('.mobile-submenu-toggle').forEach(function(btn) { btn.remove(); });
+          document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) { menu.classList.remove('mobile-expanded'); });
+          return;
+        }
+        var items = document.querySelectorAll('.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)');
+        items.forEach(function(li) {
+          if (li.querySelector('.mobile-submenu-toggle')) return;
+          var submenu = li.querySelector('.sub-menu');
+          var parentLink = li.querySelector(':scope > a');
+          if (!submenu || !parentLink) return;
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'mobile-submenu-toggle';
+          toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+          toggleBtn.setAttribute('type', 'button');
+          parentLink.insertAdjacentElement('afterend', toggleBtn);
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+              if (menu !== submenu) { menu.classList.remove('mobile-expanded'); var t = menu.parentElement.querySelector('.mobile-submenu-toggle'); if(t) t.classList.remove('expanded'); }
+            });
+            submenu.classList.toggle('mobile-expanded');
+            toggleBtn.classList.toggle('expanded');
+          });
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileSubmenuToggles); }
+      else { initMobileSubmenuToggles(); }
+      var resizeTimer; window.addEventListener('resize', function() { clearTimeout(resizeTimer); resizeTimer = setTimeout(initMobileSubmenuToggles, 250); });
+      // Re-initialize when mobile menu becomes visible (MutationObserver)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes') {
+            var target = mutation.target;
+            if (target.classList && (target.classList.contains('active') || target.classList.contains('open'))) {
+              setTimeout(initMobileSubmenuToggles, 100);
+            }
+          }
+        });
+      });
+      setTimeout(function() {
+        document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu, nav').forEach(function(menu) {
+          observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+        });
+      }, 500);
+    })();
+    </script>
+
+    <script id="zappy-navbar-scroll-effect">
+    (function(){
+      var nb=document.querySelector('nav.navbar,.navbar:not(.zappy-catalog-menu)');
+      var cm=document.querySelector('.zappy-catalog-menu,#zappy-catalog-menu');
+      if(!nb)return;
+      var fb='rgba(247,242,227,0.85)';
+      var th=60;
+      var rs=getComputedStyle(document.documentElement);
+      var td=rs.getPropertyValue('--text-dark').trim()||'#1a1a1a';
+      var tl=rs.getPropertyValue('--text-light').trim()||'#ffffff';
+      var st=true?td:tl;
+      nb.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease,box-shadow 0.3s ease';
+      if(cm)cm.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease';
+      var neSel='a,.navbar-brand,.navbar-brand a,.dropdown-toggle,.mobile-toggle,.phone-header-btn,.mobile-hamburger-btn,.mobile-close-btn,.mobile-submenu-toggle,.nav-link';
+      var skipCls=['cart-link','login-link','nav-search-toggle','search-toggle'];
+      function sTC(c,clr){var els=c.querySelectorAll(neSel);for(var i=0;i<els.length;i++){var sk=false;if(els[i].closest('.sub-menu')||els[i].closest('.dropdown-menu')){sk=true;}for(var j=0;j<skipCls.length;j++){if(els[i].classList.contains(skipCls[j])){sk=true;break;}}if(!sk)els[i].style.setProperty('color',clr,'important');}}
+      function cTC(c){var els=c.querySelectorAll(neSel);for(var i=0;i<els.length;i++){if(els[i].closest('.sub-menu')||els[i].closest('.dropdown-menu'))continue;els[i].style.removeProperty('color');}}
+      function applyScrolled(){
+        nb.classList.add('scrolled');
+        if(window.innerWidth>768){
+          nb.style.setProperty('--frosted-text',st);
+          nb.style.setProperty('background-image','none','important');
+          nb.style.setProperty('background-color',fb,'important');
+          nb.style.backdropFilter='blur(12px)';nb.style.webkitBackdropFilter='blur(12px)';nb.style.boxShadow='0 2px 16px rgba(0,0,0,0.12)';
+          sTC(nb,st);
+        }
+        if(cm){cm.classList.add('scrolled');if(window.innerWidth>768){cm.style.setProperty('background',fb,'important');cm.style.setProperty('backdrop-filter','blur(12px)','important');cm.style.setProperty('-webkit-backdrop-filter','blur(12px)','important');sTC(cm,st);}}
+      }
+      function onS(){
+        if(window._zappyNavNoDarkHero) return;
+        if(window.innerWidth<=768){nb.classList.remove('scrolled');cTC(nb);if(cm){cm.classList.remove('scrolled');cTC(cm);}return;}
+        var y=window.scrollY||window.pageYOffset;
+        if(y>th){
+          nb.classList.add('scrolled');nb.style.setProperty('background-color',fb,'important');nb.style.setProperty('background-image','none','important');
+          nb.style.setProperty('--frosted-text',st);nb.style.backdropFilter='blur(12px)';nb.style.webkitBackdropFilter='blur(12px)';nb.style.boxShadow='0 2px 16px rgba(0,0,0,0.12)';
+          sTC(nb,st);
+          if(cm){cm.classList.add('scrolled');cm.style.setProperty('background',fb,'important');cm.style.setProperty('backdrop-filter','blur(12px)','important');cm.style.setProperty('-webkit-backdrop-filter','blur(12px)','important');sTC(cm,st);}
+        }else{
+          nb.classList.remove('scrolled');nb.style.setProperty('background-color','transparent','important');nb.style.removeProperty('background-image');
+          nb.style.removeProperty('--frosted-text');nb.style.backdropFilter='none';nb.style.webkitBackdropFilter='none';nb.style.boxShadow='none';
+          cTC(nb);
+          if(cm){cm.classList.remove('scrolled');cm.style.setProperty('background','transparent','important');cm.style.setProperty('backdrop-filter','none','important');cm.style.setProperty('-webkit-backdrop-filter','none','important');cTC(cm);}
+        }
+      }
+      function sLum(rv,gv,bv){rv/=255;gv/=255;bv/=255;rv=rv<=0.03928?rv/12.92:Math.pow((rv+0.055)/1.055,2.4);gv=gv<=0.03928?gv/12.92:Math.pow((gv+0.055)/1.055,2.4);bv=bv<=0.03928?bv/12.92:Math.pow((bv+0.055)/1.055,2.4);return 0.2126*rv+0.7152*gv+0.0722*bv;}
+      window.addEventListener('scroll',onS,{passive:true});
+      window.addEventListener('resize',onS,{passive:true});
+      onS();
+      var heroEl=document.querySelector('section[class*="hero"],[data-hero-type],main:not(.courses-page-main)>section:first-child');
+      var hasDH=false;
+      if(heroEl){var hCs=getComputedStyle(heroEl);var hBI=hCs.backgroundImage;if(hBI&&hBI!=='none'){if(hBI.indexOf('url(')!==-1){var hM2=hCs.backgroundColor.match(/\d+/g);if(hM2&&hM2.length>=3){hasDH=sLum(parseInt(hM2[0]),parseInt(hM2[1]),parseInt(hM2[2]))<0.4;}else{hasDH=true;}}else if(hBI.indexOf('gradient')!==-1){var cM=hBI.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/g);if(cM&&cM.length>0){var tLm=0;for(var ci=0;ci<cM.length;ci++){var pts=cM[ci].match(/\d+/g);tLm+=sLum(parseInt(pts[0]),parseInt(pts[1]),parseInt(pts[2]));}hasDH=(tLm/cM.length)<0.4;}else{hasDH=true;}}else{hasDH=true;}}else{var hM=hCs.backgroundColor.match(/\d+/g);if(hM&&hM.length>=3){hasDH=sLum(parseInt(hM[0]),parseInt(hM[1]),parseInt(hM[2]))<0.4;}}}
+      if(!hasDH){window.removeEventListener('scroll',onS);window.removeEventListener('resize',onS);applyScrolled();window._zappyNavNoDarkHero=true;}
+    })();
+    </script>
+
+    <script>
+    (function(){
+      var _applied=false;
+      function _isHeroBg(w){var img=w.querySelector('img');if(img&&(img.getAttribute('data-hero-bg')==='true'||img.getAttribute('data-hero-background')==='true'))return true;var p=(w.style.position||'').replace(/\s*!important\s*/g,'').trim();var ww=(w.style.width||'').replace(/\s*!important\s*/g,'').trim();var hh=(w.style.height||'').replace(/\s*!important\s*/g,'').trim();return p==='absolute'&&ww==='100%'&&hh==='100%';}
+      function fixDesktopWrappers(){
+        // No-op: desktop wrapper restoration is handled by ZAPPY_PUBLISHED_ZOOM_WRAPPER_RUNTIME
+        // in script.js (restoreWrapperDimensions). The old inflation logic here was expanding
+        // small wrappers (e.g. 139px logo wrappers) to their parent width, conflicting with
+        // the correct stored dimensions.
+      }
+      function _parsePos(s){var x=50,y=50;try{var m=(s||'').match(/(-?d+(?:.d+)?)%s+(-?d+(?:.d+)?)%/);if(m){x=parseFloat(m[1]);y=parseFloat(m[2]);}}catch(e){}if(!isFinite(x))x=50;if(!isFinite(y))y=50;return{x:Math.max(0,Math.min(100,x)),y:Math.max(0,Math.min(100,y))};}
+      function _coverPct(iA,cA){if(!isFinite(iA)||iA<=0||!isFinite(cA)||cA<=0)return{w:100,h:100};if(iA>=cA)return{w:(iA/cA)*100,h:100};return{w:100,h:(cA/iA)*100};}
+      function applyMobile(){
+        if(_applied)return;_applied=true;
+        document.querySelectorAll('[data-zappy-zoom-wrapper="true"]').forEach(function(w){
+          if(_isHeroBg(w))return;
+          var cw=w.style.getPropertyValue('width');
+          var _sW=parseFloat(w.getAttribute('data-zappy-zoom-wrapper-width'))||0;
+          var _sH=parseFloat(w.getAttribute('data-zappy-zoom-wrapper-height'))||0;
+          if(!cw&&!(_sW>0&&_sH>0))return;
+          if(!w._zappyDesktop)w._zappyDesktop={wStyle:w.getAttribute('style')};
+          var img=w.querySelector('img');
+          if(!img)return;
+          if(!img._zappyDesktop)img._zappyDesktop={src:img.getAttribute('src'),style:img.getAttribute('style')};
+          var mobileZoomStr=img.getAttribute('data-zappy-mobile-zoom');
+          var mobileZoom=parseFloat(mobileZoomStr);
+          var mobileSrc=img.getAttribute('data-zappy-mobile-src');
+          var mobilePos=img.getAttribute('data-zappy-mobile-object-position');
+          var parentOvf=w.parentElement?((w.parentElement.style.overflow||'')+(window.getComputedStyle(w.parentElement).overflow||'')).trim():'';
+          var inConstrainedParent=parentOvf.indexOf('hidden')!==-1||parentOvf.indexOf('clip')!==-1;
+          if(inConstrainedParent){
+            w.style.setProperty('max-width','100%','important');
+          }else{
+            w.style.setProperty('width','100%','important');
+            w.style.setProperty('max-width','100%','important');
+          }
+          if(mobileSrc)img.src=mobileSrc;
+          function _applyZoomCrop(_img,_w,_ePos,_eZoom){
+            var rect=_w.getBoundingClientRect();
+            if(!rect||!rect.width||!rect.height)return;
+            var nW=_img.naturalWidth||0,nH=_img.naturalHeight||0;
+            if(!(nW>0&&nH>0))return;
+            var iA=nW/nH,cA=rect.width/rect.height;
+            var cv=_coverPct(iA,cA);
+            var wP=100,hP=100;
+            if(_eZoom>=1){wP=cv.w*_eZoom;hP=cv.h*_eZoom;}
+            else{var t2=(_eZoom-0.5)/0.5;if(!isFinite(t2))t2=0;t2=Math.max(0,Math.min(1,t2));wP=100+t2*(cv.w-100);hP=100+t2*(cv.h-100);}
+            var p2=_parsePos(_ePos);
+            var lP=(100-wP)*(p2.x/100);
+            var tP=(100-hP)*(p2.y/100);
+            _img.style.setProperty('position','absolute','important');
+            _img.style.setProperty('left',lP+'%','important');
+            _img.style.setProperty('top',tP+'%','important');
+            _img.style.setProperty('width',wP+'%','important');
+            _img.style.setProperty('height',hP+'%','important');
+            _img.style.setProperty('max-width','none','important');
+            _img.style.setProperty('max-height','none','important');
+            _img.style.setProperty('display','block','important');
+            _img.style.setProperty('object-fit',_eZoom<1?'fill':'cover','important');
+            _img.style.setProperty('transform','none','important');
+            _img.style.setProperty('margin','0','important');
+          }
+          if(_sW>0&&_sH>0){
+            var effZoom=(isFinite(mobileZoom)&&mobileZoom>0)?mobileZoom:(parseFloat(img.getAttribute('data-zappy-zoom'))||1);
+            var effPos=mobilePos||img.getAttribute('data-zappy-object-position')||img.style.objectPosition||'50% 50%';
+            w.style.setProperty('overflow','hidden','important');
+            w.style.setProperty('position','relative','important');
+            w.style.setProperty('width','100%','important');
+            w.style.setProperty('max-width','100%','important');
+            if(_sW>0&&_sH>0){w.style.setProperty('padding-bottom','0','important');w.style.setProperty('aspect-ratio',_sW+'/'+_sH,'important');w.style.setProperty('height','auto','important');}
+            _applyZoomCrop(img,w,effPos,effZoom);
+            if(!(img.complete&&img.naturalWidth>0)){
+              (function(_i,_w2,_p,_z){_i.addEventListener('load',function _ol(){_i.removeEventListener('load',_ol);try{_applyZoomCrop(_i,_w2,_p,_z);}catch(e){}});
+              })(img,w,effPos,effZoom);
+            }
+          }else{
+            if(!inConstrainedParent)w.style.setProperty('height','auto','important');
+            img.style.setProperty('position','relative','important');
+            img.style.setProperty('width','100%','important');
+            img.style.setProperty('height','auto','important');
+            img.style.setProperty('max-width','100%','important');
+            img.style.setProperty('max-height',inConstrainedParent?'none':'400px','important');
+            img.style.setProperty('object-fit','cover','important');
+            img.style.setProperty('left','0','important');
+            img.style.setProperty('top','0','important');
+            img.style.setProperty('transform','none','important');
+          }
+        });
+        document.querySelectorAll('img[data-zappy-mobile-src],img[data-zappy-mobile-object-position],img[data-zappy-mobile-zoom]').forEach(function(img){
+          var zw=img.closest('[data-zappy-zoom-wrapper="true"]');
+          if(zw&&!_isHeroBg(zw))return;
+          if(!img._zappyDesktop)img._zappyDesktop={src:img.getAttribute('src'),style:img.getAttribute('style')};
+          var mobileSrc=img.getAttribute('data-zappy-mobile-src');
+          var mobilePos=img.getAttribute('data-zappy-mobile-object-position');
+          var mobileZoom=parseFloat(img.getAttribute('data-zappy-mobile-zoom'));
+          if(mobileSrc)img.src=mobileSrc;
+          if(mobilePos)img.style.setProperty('object-position',mobilePos,'important');
+          if(mobileZoom>1){
+            img.style.setProperty('transform','scale('+mobileZoom+')','important');
+            img.style.setProperty('transform-origin',mobilePos||'50% 50%','important');
+            var p=img.parentElement;
+            if(p)p.style.setProperty('overflow','hidden','important');
+          }
+        });
+      }
+      function revertDesktop(){
+        if(!_applied)return;_applied=false;
+        document.querySelectorAll('[data-zappy-zoom-wrapper="true"]').forEach(function(w){
+          if(w._zappyDesktop&&w._zappyDesktop.wStyle!=null){w.setAttribute('style',w._zappyDesktop.wStyle);}
+          var img=w.querySelector('img');
+          if(img&&img._zappyDesktop){
+            if(img._zappyDesktop.src!=null)img.setAttribute('src',img._zappyDesktop.src);
+            if(img._zappyDesktop.style!=null)img.setAttribute('style',img._zappyDesktop.style);
+            else img.removeAttribute('style');
+          }
+        });
+        document.querySelectorAll('img[data-zappy-mobile-src],img[data-zappy-mobile-object-position],img[data-zappy-mobile-zoom]').forEach(function(img){
+          var zw=img.closest('[data-zappy-zoom-wrapper="true"]');
+          if(zw&&!_isHeroBg(zw))return;
+          if(img._zappyDesktop){
+            if(img._zappyDesktop.src!=null)img.setAttribute('src',img._zappyDesktop.src);
+            if(img._zappyDesktop.style!=null)img.setAttribute('style',img._zappyDesktop.style);
+            else img.removeAttribute('style');
+          }
+        });
+        _fixHeroBgWrappers();
+        fixDesktopWrappers();
+      }
+      function _fixHeroBgWrappers(){var isMob=window.innerWidth<=768;document.querySelectorAll('[data-zappy-zoom-wrapper="true"]').forEach(function(w){if(!_isHeroBg(w))return;w.style.setProperty('position','absolute','important');w.style.setProperty('top','0','important');w.style.setProperty('left','0','important');w.style.setProperty('width','100%','important');w.style.setProperty('height','100%','important');w.style.setProperty('max-width','none','important');w.style.setProperty('overflow','hidden','important');w.setAttribute('data-zappy-zoom-wrapper-width-mode','full');var img=w.querySelector('img');if(img){img.style.setProperty('width','100%','important');img.style.setProperty('height','100%','important');img.style.setProperty('object-fit','cover','important');img.style.setProperty('position','relative','important');img.style.setProperty('top','0','important');img.style.setProperty('left','0','important');img.style.setProperty('max-width','none','important');img.style.setProperty('max-height','none','important');img.style.setProperty('display','block','important');if(isMob){var mSrc=img.getAttribute('data-zappy-mobile-src');var mPos=img.getAttribute('data-zappy-mobile-object-position');var mZoom=parseFloat(img.getAttribute('data-zappy-mobile-zoom'));if(mSrc){if(!img._zappyDesktop)img._zappyDesktop={src:img.getAttribute('src'),style:img.getAttribute('style')};img.src=mSrc;}if(mPos)img.style.setProperty('object-position',mPos,'important');if(mZoom>1){img.style.setProperty('transform','scale('+mZoom+')','important');img.style.setProperty('transform-origin',mPos||'50% 50%','important');}}}});}
+      function init(){
+        _fixHeroBgWrappers();
+        var mq=window.matchMedia('(max-width:768px)');
+        function onChange(e){if(e.matches)applyMobile();else revertDesktop();}
+        if(mq.matches)applyMobile();
+        else fixDesktopWrappers();
+        try{mq.addEventListener('change',onChange);}catch(e){mq.addListener(onChange);}
+      }
+      if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
+      else setTimeout(init,50);
+    })();
+    </script>
+</body>
+</html>
