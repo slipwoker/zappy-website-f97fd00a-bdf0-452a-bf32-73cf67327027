@@ -289,6 +289,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Terms & Conditions">
     <meta name="twitter:description" content="Terms of service - user rights and obligations">
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"LocalBusiness","@id":"https://mr-boynton-beach.zappy5.app#organization","name":"Mr. Boynton Beach","url":"https://mr-boynton-beach.zappy5.app","description":"Mr. Boynton Beach appears to be a brand or business connected to Boynton Beach, Florida, with a personified 'Mr.' branding that suggests a distinctive, character-driven identity. The name implies a fun, local, and beach-oriented personality tied to the Boynton Beach community.","address":{"@type":"PostalAddress","streetAddress":"7555 Sierra Drive E, Boca Raton, Florida, 33433, US"},"contactPoint":[{"@type":"ContactPoint","contactType":"customer service","email":"mrboyntonbeach@gmail.com","telephone":"15614458719"}]},{"@type":"WebSite","@id":"https://mr-boynton-beach.zappy5.app#website","url":"https://mr-boynton-beach.zappy5.app","name":"Mr. Boynton Beach","publisher":{"@id":"https://mr-boynton-beach.zappy5.app#organization"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://mr-boynton-beach.zappy5.app"},{"@type":"ListItem","position":2,"name":"Terms","item":"https://mr-boynton-beach.zappy5.app/terms"}]}]}</script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     
@@ -379,10 +380,9 @@
       @media (max-width: 768px) {
         #mic-access-tool-general-button, .mic-access-tool-general-button,
         #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
-        ._access-icon { display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }
-        #mic-access-tool-box.opened-mic-access-tool, .mic-access-tool-box.opened-mic-access-tool,
-        #mic-init-access-tool #mic-access-tool-box.opened-mic-access-tool {
-          visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+        ._access-icon, #mic-access-tool-box, .mic-access-tool-box,
+        #mic-init-access-tool #mic-access-tool-box, div[id*="mic-access-tool-box"], ._access-menu {
+          display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;
         }
       }
       @media (min-width: 769px) {
