@@ -1,0 +1,81 @@
+# Mr. Boynton Beach — Generative Engine Optimization Map
+
+> Mr. Boynton Beach appears to be a brand or business connected to Boynton Beach, Florida, with a personified 'Mr.' branding that suggests a distinctive, character-driven identity. The name implies a fun, local, and beach-oriented personality tied to the Boynton Beach community.
+
+---
+
+## Pages
+
+### Home
+https://example.com
+Unleash your inner local with Mr. Boynton Beach, your passport to sun-soaked vibes and coastal charm. Explore our world and start living the beach lifestyle today!
+
+### Experiences
+https://example.com/experiences
+From cabana beach lifestyle resort vibes to hidden local gems, unlock curated adventures that define the Boynton Beach spirit. Your next story starts in the sand.
+
+### About
+https://example.com/about
+Discover the personality, passion, and saltwater roots that fuel Mr. Boynton Beach. It&#39;s more than a brand—it&#39;s a lifestyle tropical beach resort &amp; spa state of mind.
+
+### Contact
+https://example.com/contact
+Ready to embrace the cabana beach lifestyle resort energy? Drop us a line and let&#39;s craft your perfect coastal chapter. The tide won&#39;t wait—reach out now!
+
+## Legal & Policy
+
+### Privacy Policy
+https://example.com/privacy
+Information about how user data is collected, stored, and protected.
+
+### Terms & Conditions
+https://example.com/terms
+Legal terms describing service usage, rights, and policies.
+
+### Accessibility Statement
+https://example.com/accessibility
+Information about WCAG compliance and accessibility features.
+
+---
+
+## How to Contact Us
+
+- Email: mrboyntonbeach@gmail.com
+- Phone: 15614458719
+- Phone (tel): tel:15614458719
+- Address: 7555 Sierra Drive E, Boca Raton, Florida, 33433, US
+
+### Contact form
+- URL: https://example.com/contact
+- Endpoint: https://example.com/api/email/contact-form
+- Method: POST
+- Content-Type: application/json
+- Fields:
+  - `name` (text, required)
+  - `email` (email, required)
+  - `phone` (tel)
+  - `message` (textarea, required)
+  - `privacy_consent` (checkbox, required)
+
+---
+
+# Business Context (for LLM understanding)
+
+## About Mr. Boynton Beach
+Mr. Boynton Beach appears to be a brand or business connected to Boynton Beach, Florida, with a personified 'Mr.' branding that suggests a distinctive, character-driven identity. The name implies a fun, local, and beach-oriented personality tied to the Boynton Beach community.
+
+## Target Audience
+- Vacationing Families
+- Eco-Conscious Travelers
+- Active Retirees
+
+## Industry
+Beach / Lifestyle
+
+---
+
+# Machine-readable feeds
+
+- Sitemap (XML): https://example.com/sitemap.xml
+- Robots: https://example.com/robots.txt
+- Flattened page text (for LLMs): https://example.com/llms-full.txt
